@@ -15,6 +15,9 @@ import type {
   WsConnectParams,
   AuthConfig,
   OAuthTokenStatus,
+  ImportPreview,
+  ImportFormat,
+  ExportFormat,
 } from "@apiark/types";
 
 // ── Tauri environment detection ──
@@ -280,6 +283,34 @@ export async function oauthGetTokenStatus(key: string): Promise<OAuthTokenStatus
 
 export async function oauthClearToken(key: string): Promise<void> {
   return await invoke<void>("oauth_clear_token", { key });
+}
+
+// ── Import/Export ──
+
+export async function detectImportFormat(filePath: string): Promise<string> {
+  return await invoke<string>("detect_import_format", { filePath });
+}
+
+export async function importPreview(
+  filePath: string,
+  format: ImportFormat,
+): Promise<ImportPreview> {
+  return await invoke<ImportPreview>("import_preview", { filePath, format });
+}
+
+export async function importCollection(
+  filePath: string,
+  format: ImportFormat,
+  targetDir: string,
+): Promise<string> {
+  return await invoke<string>("import_collection", { filePath, format, targetDir });
+}
+
+export async function exportCollection(
+  collectionPath: string,
+  format: ExportFormat,
+): Promise<string> {
+  return await invoke<string>("export_collection", { collectionPath, format });
 }
 
 // ── Settings ──

@@ -345,6 +345,24 @@ export interface RunProgress {
   result: RequestRunResult;
 }
 
+// ── Import/Export ──
+
+export interface ImportPreview {
+  collectionName: string;
+  requestCount: number;
+  folderCount: number;
+  environmentCount: number;
+  warnings: ImportWarning[];
+}
+
+export interface ImportWarning {
+  itemName: string;
+  message: string;
+}
+
+export type ImportFormat = "postman" | "insomnia" | "bruno" | "openapi";
+export type ExportFormat = "postman" | "openapi";
+
 // ── Persisted State ──
 
 export interface PersistedTab {

@@ -1,5 +1,7 @@
 mod commands;
+mod exporter;
 mod http;
+mod importer;
 mod models;
 mod oauth;
 mod runner;
@@ -19,6 +21,7 @@ use commands::greet;
 use commands::history::{clear_history, delete_history_entry, get_history, search_history, AppState};
 use commands::http::{send_request, send_request_with_scripts};
 use commands::curl::{export_curl_command, parse_curl_command};
+use commands::import_export::{detect_import_format, export_collection, import_collection, import_preview};
 use commands::oauth::{oauth_clear_token, oauth_get_token_status, oauth_start_flow};
 use commands::runner::run_collection_command;
 use commands::sse::{sse_connect, sse_disconnect, SseManager};
@@ -124,6 +127,11 @@ pub fn run() {
             oauth_start_flow,
             oauth_get_token_status,
             oauth_clear_token,
+            // Import/Export commands
+            detect_import_format,
+            import_preview,
+            import_collection,
+            export_collection,
             // Settings commands
             get_settings,
             update_settings,

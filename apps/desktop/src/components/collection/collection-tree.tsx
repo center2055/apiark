@@ -11,7 +11,9 @@ import {
   FolderPlus,
   Trash2,
   Pencil,
+  Download,
 } from "lucide-react";
+import { exportCollectionToFile } from "@/lib/export-collection";
 
 const METHOD_COLORS: Record<HttpMethod, string> = {
   GET: "text-green-500",
@@ -230,12 +232,29 @@ function TreeNode({
           items={[
             { label: "New Request", icon: FilePlus, onClick: handleNewRequest },
             { label: "New Folder", icon: FolderPlus, onClick: handleNewFolder },
-            ...(node.type !== "collection"
+            ...(node.type === "collection"
               ? [
+                  {
+                    label: "Export as Postman",
+                    icon: Download,
+                    onClick: () => {
+                      closeContextMenu();
+                      exportCollectionToFile(node.path, node.name, "postman").catch(console.error);
+                    },
+                  },
+                  {
+                    label: "Export as OpenAPI",
+                    icon: Download,
+                    onClick: () => {
+                      closeContextMenu();
+                      exportCollectionToFile(node.path, node.name, "openapi").catch(console.error);
+                    },
+                  },
+                ]
+              : [
                   { label: "Rename", icon: Pencil, onClick: handleRename },
                   { label: "Delete", icon: Trash2, onClick: handleDelete, danger: true },
-                ]
-              : []),
+                ]),
           ]}
         />
       )}

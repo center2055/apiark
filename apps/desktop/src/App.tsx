@@ -11,6 +11,7 @@ import { GraphQLView } from "@/components/graphql/graphql-view";
 import { WebSocketView } from "@/components/websocket/websocket-view";
 import { SSEView } from "@/components/sse/sse-view";
 import { CollectionRunnerDialog } from "@/components/runner/collection-runner-dialog";
+import { ImportDialog } from "@/components/import/import-dialog";
 import type { TabProtocol } from "@apiark/types";
 import { useTabStore, useActiveTab } from "@/stores/tab-store";
 import { useHistoryStore } from "@/stores/history-store";
@@ -27,6 +28,7 @@ function App() {
   const [curlImportOpen, setCurlImportOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [runnerOpen, setRunnerOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   useTheme();
 
@@ -123,8 +125,10 @@ function App() {
         onOpenSettings={openSettings}
         onOpenCurlImport={openCurlImport}
         onOpenRunner={() => setRunnerOpen(true)}
+        onOpenImport={() => setImportOpen(true)}
       />
       <CollectionRunnerDialog open={runnerOpen} onOpenChange={setRunnerOpen} />
+      <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }

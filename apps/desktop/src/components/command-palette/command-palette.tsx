@@ -8,6 +8,7 @@ import {
   Moon,
   FolderOpen,
   Upload,
+  Download,
   Play,
   Globe,
   Zap,
@@ -17,7 +18,8 @@ import { useTabStore } from "@/stores/tab-store";
 import { useCollectionStore } from "@/stores/collection-store";
 import { useEnvironmentStore } from "@/stores/environment-store";
 import { useSettingsStore } from "@/stores/settings-store";
-import type { CollectionNode } from "@apiark/types";
+import { exportCollectionToFile } from "@/lib/export-collection";
+import type { CollectionNode, ExportFormat } from "@apiark/types";
 
 interface Command {
   id: string;
@@ -33,6 +35,7 @@ interface CommandPaletteProps {
   onOpenSettings: () => void;
   onOpenCurlImport: () => void;
   onOpenRunner?: () => void;
+  onOpenImport?: () => void;
 }
 
 export function CommandPalette({
@@ -41,6 +44,7 @@ export function CommandPalette({
   onOpenSettings,
   onOpenCurlImport,
   onOpenRunner,
+  onOpenImport,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -100,6 +104,15 @@ export function CommandPalette({
       icon: Upload,
       action: () => { onOpenCurlImport(); onOpenChange(false); },
     });
+    if (onOpenImport) {
+      cmds.push({
+        id: "import-collection",
+        label: "Import Collection",
+        category: "General",
+        icon: Upload,
+        action: () => { onOpenImport(); onOpenChange(false); },
+      });
+    }
     cmds.push({
       id: "toggle-theme",
       label: `Switch to ${settings.theme === "dark" ? "Light" : "Dark"} Theme`,
@@ -159,6 +172,24 @@ export function CommandPalette({
     };
     for (const col of collections) {
       collectRequests(col, col.path);
+
+      // Export commands per collection
+      const exportFormats: { format: ExportFormat; label: string }[] = [
+        { format: "postman", label: "Postman" },
+        { format: "openapi", label: "OpenAPI" },
+      ];
+      for (const { format, label } of exportFormats) {
+        cmds.push({
+          id: `export-${col.path}-${format}`,
+          label: `Export ${col.name} as ${label}`,
+          category: "Export",
+          icon: Download,
+          action: () => {
+            exportCollectionToFile(col.path, col.name, format).catch(console.error);
+            onOpenChange(false);
+          },
+        });
+      }
     }
 
     return cmds;
