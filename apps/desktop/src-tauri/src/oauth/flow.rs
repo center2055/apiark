@@ -146,13 +146,14 @@ async fn client_credentials_flow(
     let client = reqwest::Client::new();
     let mut params = HashMap::new();
     params.insert("grant_type", "client_credentials");
+    params.insert("client_id", client_id);
+    params.insert("client_secret", client_secret);
     if !scope.is_empty() {
         params.insert("scope", scope);
     }
 
     let resp = client
         .post(token_url)
-        .basic_auth(client_id, Some(client_secret))
         .form(&params)
         .send()
         .await
