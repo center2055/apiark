@@ -22,7 +22,7 @@ tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-notification = "2"
-reqwest = { version = "0.12", features = ["json", "cookies", "rustls-tls", "multipart"] }
+reqwest = { version = "0.12", features = ["json", "cookies", "rustls-tls", "multipart", "stream"] }
 url = "2"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
@@ -39,6 +39,9 @@ rand = "0.8"
 rusqlite = { version = "0.31", features = ["bundled"] }
 rquickjs = { version = "0.9", features = ["parallel", "loader"] }
 dirs = "5"
+csv = "1"
+tokio-tungstenite = { version = "0.24", features = ["rustls-tls-webpki-roots"] }
+futures-util = "0.3"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]

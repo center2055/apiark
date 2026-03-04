@@ -7,6 +7,11 @@ import { ResponsePanel } from "@/components/response/response-panel";
 import { SettingsDialog } from "@/components/settings/settings-dialog";
 import { CurlImportDialog } from "@/components/request/curl-import-dialog";
 import { CommandPalette } from "@/components/command-palette/command-palette";
+import { GraphQLView } from "@/components/graphql/graphql-view";
+import { WebSocketView } from "@/components/websocket/websocket-view";
+import { SSEView } from "@/components/sse/sse-view";
+import { CollectionRunnerDialog } from "@/components/runner/collection-runner-dialog";
+import type { TabProtocol } from "@apiark/types";
 import { useTabStore, useActiveTab } from "@/stores/tab-store";
 import { useHistoryStore } from "@/stores/history-store";
 import { useSettingsStore } from "@/stores/settings-store";
@@ -21,6 +26,7 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [curlImportOpen, setCurlImportOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [runnerOpen, setRunnerOpen] = useState(false);
 
   useTheme();
 
@@ -103,20 +109,7 @@ function App() {
         <TabBar />
 
         {activeTab ? (
-          <>
-            {/* URL Bar */}
-            <UrlBar />
-
-            {/* Request + Response split */}
-            <div className="flex flex-1 overflow-hidden">
-              <div className="flex w-1/2 flex-col border-r border-[var(--color-border)]">
-                <RequestPanel />
-              </div>
-              <div className="flex w-1/2 flex-col">
-                <ResponsePanel />
-              </div>
-            </div>
-          </>
+          <ProtocolView protocol={activeTab.protocol} />
         ) : (
           <EmptyState />
         )}
@@ -129,9 +122,36 @@ function App() {
         onOpenChange={setCommandPaletteOpen}
         onOpenSettings={openSettings}
         onOpenCurlImport={openCurlImport}
+        onOpenRunner={() => setRunnerOpen(true)}
       />
+      <CollectionRunnerDialog open={runnerOpen} onOpenChange={setRunnerOpen} />
     </div>
   );
+}
+
+function ProtocolView({ protocol }: { protocol: TabProtocol }) {
+  switch (protocol) {
+    case "graphql":
+      return <GraphQLView />;
+    case "websocket":
+      return <WebSocketView />;
+    case "sse":
+      return <SSEView />;
+    default:
+      return (
+        <>
+          <UrlBar />
+          <div className="flex flex-1 overflow-hidden">
+            <div className="flex w-1/2 flex-col border-r border-[var(--color-border)]">
+              <RequestPanel />
+            </div>
+            <div className="flex w-1/2 flex-col">
+              <ResponsePanel />
+            </div>
+          </div>
+        </>
+      );
+  }
 }
 
 function EmptyState() {

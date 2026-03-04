@@ -1,8 +1,11 @@
 mod commands;
 mod http;
 mod models;
+mod runner;
 mod scripting;
+mod sse;
 mod storage;
+mod websocket;
 
 use std::sync::{Arc, Mutex};
 
@@ -15,6 +18,10 @@ use commands::greet;
 use commands::history::{clear_history, delete_history_entry, get_history, search_history, AppState};
 use commands::http::{send_request, send_request_with_scripts};
 use commands::curl::{export_curl_command, parse_curl_command};
+use commands::runner::run_collection_command;
+use commands::sse::{sse_connect, sse_disconnect, SseManager};
+use commands::websocket::{ws_connect, ws_disconnect, ws_send};
+use websocket::manager::WsManager;
 use commands::settings::{get_settings, update_settings, SettingsState};
 use commands::state::{load_persisted_state, save_persisted_state};
 use storage::history::HistoryDb;
@@ -67,6 +74,8 @@ pub fn run() {
     tauri::Builder::default()
         .manage(app_state)
         .manage(settings_state)
+        .manage(WsManager::new())
+        .manage(SseManager::new())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
@@ -98,6 +107,15 @@ pub fn run() {
             // State persistence commands
             load_persisted_state,
             save_persisted_state,
+            // Runner commands
+            run_collection_command,
+            // WebSocket commands
+            ws_connect,
+            ws_send,
+            ws_disconnect,
+            // SSE commands
+            sse_connect,
+            sse_disconnect,
             // Settings commands
             get_settings,
             update_settings,

@@ -68,6 +68,27 @@ pub fn load_dotenv_secrets(collection_path: &Path) -> HashMap<String, String> {
     secrets
 }
 
+/// Resolve all variables for a given environment, merging env variables + .env secrets.
+pub fn get_resolved_variables(
+    collection_path: &Path,
+    environment_name: &str,
+) -> Result<HashMap<String, String>, String> {
+    let envs = load_environments(collection_path)?;
+    let env = envs
+        .iter()
+        .find(|e| e.name == environment_name)
+        .ok_or_else(|| format!("Environment '{}' not found", environment_name))?;
+
+    let mut variables = env.variables.clone();
+    let secrets = load_dotenv_secrets(collection_path);
+    for secret_key in &env.secrets {
+        if let Some(value) = secrets.get(secret_key) {
+            variables.insert(secret_key.clone(), value.clone());
+        }
+    }
+    Ok(variables)
+}
+
 /// Save an environment file to disk.
 pub fn save_environment(collection_path: &Path, env: &EnvironmentFile) -> Result<(), String> {
     let env_dir = collection_path.join(".apiark").join("environments");

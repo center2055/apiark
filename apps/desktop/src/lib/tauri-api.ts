@@ -10,6 +10,9 @@ import type {
   AppSettings,
   ParsedCurlRequest,
   PersistedState,
+  RunConfig,
+  RunSummary,
+  WsConnectParams,
 } from "@apiark/types";
 
 // ── Tauri environment detection ──
@@ -223,6 +226,40 @@ export async function exportCurlCommand(
     body: body ?? null,
     authBasic: authBasic ?? null,
   });
+}
+
+// ── Collection Runner ──
+
+export async function runCollection(config: RunConfig): Promise<RunSummary> {
+  try {
+    return await invoke<RunSummary>("run_collection_command", { config });
+  } catch (err) {
+    handleTauriError(err);
+  }
+}
+
+// ── WebSocket ──
+
+export async function wsConnect(connectionId: string, params: WsConnectParams): Promise<void> {
+  return await invoke<void>("ws_connect", { connectionId, params });
+}
+
+export async function wsSend(connectionId: string, message: string): Promise<void> {
+  return await invoke<void>("ws_send", { connectionId, message });
+}
+
+export async function wsDisconnect(connectionId: string): Promise<void> {
+  return await invoke<void>("ws_disconnect", { connectionId });
+}
+
+// ── SSE ──
+
+export async function sseConnect(connectionId: string, params: { url: string; headers: import("@apiark/types").KeyValuePair[] }): Promise<void> {
+  return await invoke<void>("sse_connect", { connectionId, params });
+}
+
+export async function sseDisconnect(connectionId: string): Promise<void> {
+  return await invoke<void>("sse_disconnect", { connectionId });
 }
 
 // ── Settings ──

@@ -217,6 +217,108 @@ export interface AppSettings {
   sidebarWidth: number;
 }
 
+// ── Tab Protocol ──
+
+export type TabProtocol = "http" | "graphql" | "websocket" | "sse";
+
+export interface GraphQLState {
+  query: string;
+  variables: string;
+  operationName: string;
+  schemaJson: string | null;
+}
+
+// ── WebSocket ──
+
+export interface WsConnectParams {
+  url: string;
+  headers: KeyValuePair[];
+  protocols: string[];
+}
+
+export interface WsMessage {
+  connectionId: string;
+  direction: "sent" | "received";
+  content: string;
+  messageType: "text" | "binary";
+  timestamp: string;
+  sizeBytes: number;
+}
+
+export interface WsStatus {
+  connectionId: string;
+  state: "connecting" | "connected" | "disconnected";
+  error?: string;
+}
+
+// ── SSE ──
+
+export interface SseConnectParams {
+  url: string;
+  headers: KeyValuePair[];
+}
+
+export interface SseEvent {
+  connectionId: string;
+  eventType: string;
+  data: string;
+  id?: string;
+  timestamp: string;
+}
+
+export interface SseStatus {
+  connectionId: string;
+  state: "connecting" | "connected" | "disconnected";
+  error?: string;
+}
+
+// ── Collection Runner ──
+
+export interface RunConfig {
+  collectionPath: string;
+  folderPath?: string;
+  environmentName?: string;
+  delayMs: number;
+  iterations: number;
+  dataFile?: string;
+  stopOnError: boolean;
+}
+
+export interface RequestRunResult {
+  name: string;
+  method: string;
+  url: string;
+  status?: number;
+  timeMs?: number;
+  passed: boolean;
+  testCount: number;
+  testPassed: number;
+  assertionCount: number;
+  assertionPassed: number;
+  error?: string;
+}
+
+export interface IterationResult {
+  iteration: number;
+  results: RequestRunResult[];
+}
+
+export interface RunSummary {
+  totalRequests: number;
+  totalPassed: number;
+  totalFailed: number;
+  totalTimeMs: number;
+  iterations: IterationResult[];
+}
+
+export interface RunProgress {
+  runId: string;
+  iteration: number;
+  requestIndex: number;
+  totalRequests: number;
+  result: RequestRunResult;
+}
+
 // ── Persisted State ──
 
 export interface PersistedTab {
@@ -237,6 +339,10 @@ export interface Tab {
   filePath: string | null;
   collectionPath: string | null;
   isDirty: boolean;
+  protocol: TabProtocol;
+
+  // GraphQL state (when protocol === "graphql")
+  graphql: GraphQLState | null;
 
   // Request state
   method: HttpMethod;

@@ -7,6 +7,7 @@ import type {
   HttpError,
   Tab,
   RequestFile,
+  GraphQLState,
 } from "@apiark/types";
 import {
   sendRequest,
@@ -31,6 +32,17 @@ interface TabState {
   closeAllTabs: () => void;
   setActiveTab: (id: string) => void;
   reorderTabs: (fromIndex: number, toIndex: number) => void;
+
+  // Protocol-specific tab creation
+  newGraphQLTab: () => void;
+  newWebSocketTab: () => void;
+  newSSETab: () => void;
+
+  // GraphQL mutations
+  setGraphQLQuery: (query: string) => void;
+  setGraphQLVariables: (variables: string) => void;
+  setGraphQLOperationName: (operationName: string) => void;
+  setGraphQLSchema: (schema: string | null) => void;
 
   // Active tab request mutations
   setMethod: (method: HttpMethod) => void;
@@ -68,6 +80,8 @@ function createEmptyTab(overrides?: Partial<Tab>): Tab {
     filePath: null,
     collectionPath: null,
     isDirty: false,
+    protocol: "http",
+    graphql: null,
     method: "GET",
     url: "",
     headers: [emptyKvRow()],
@@ -140,12 +154,31 @@ function requestFileToTab(
     }
   }
 
+  // Detect GraphQL: JSON body with a "query" field
+  const isGraphQL = file.body?.type === "json" && file.body.content &&
+    (() => { try { return "query" in JSON.parse(file.body!.content!); } catch { return false; } })();
+  const graphqlState: GraphQLState | null = isGraphQL
+    ? (() => {
+        try {
+          const parsed = JSON.parse(file.body!.content!);
+          return {
+            query: parsed.query || "",
+            variables: parsed.variables ? JSON.stringify(parsed.variables, null, 2) : "{}",
+            operationName: parsed.operationName || "",
+            schemaJson: null,
+          };
+        } catch { return { query: "", variables: "{}", operationName: "", schemaJson: null }; }
+      })()
+    : null;
+
   return {
     id: generateTabId(),
     name: file.name,
     filePath,
     collectionPath,
     isDirty: false,
+    protocol: isGraphQL ? "graphql" : "http",
+    graphql: graphqlState,
     method: file.method,
     url: file.url,
     headers,
@@ -224,6 +257,35 @@ export const useTabStore = create<TabState>((set, get) => ({
     }));
   },
 
+  newGraphQLTab: () => {
+    const tab = createEmptyTab({
+      name: "Untitled GraphQL",
+      protocol: "graphql",
+      method: "POST",
+      graphql: { query: "", variables: "{}", operationName: "", schemaJson: null },
+    });
+    set((state) => ({ tabs: [...state.tabs, tab], activeTabId: tab.id }));
+  },
+
+  newWebSocketTab: () => {
+    const tab = createEmptyTab({
+      name: "Untitled WebSocket",
+      protocol: "websocket",
+      method: "GET",
+      url: "ws://localhost:8080",
+    });
+    set((state) => ({ tabs: [...state.tabs, tab], activeTabId: tab.id }));
+  },
+
+  newSSETab: () => {
+    const tab = createEmptyTab({
+      name: "Untitled SSE",
+      protocol: "sse",
+      method: "GET",
+    });
+    set((state) => ({ tabs: [...state.tabs, tab], activeTabId: tab.id }));
+  },
+
   openTab: async (filePath, collectionPath) => {
     // Check if already open
     const existing = get().tabs.find((t) => t.filePath === filePath);
@@ -298,6 +360,20 @@ export const useTabStore = create<TabState>((set, get) => ({
   setTestScript: (script) => set((state) => updateActiveTab(state, () => ({ testScript: script }))),
   setAssertions: (assertions) => set((state) => updateActiveTab(state, () => ({ assertions }))),
 
+  // GraphQL setters
+  setGraphQLQuery: (query) => set((state) => updateActiveTab(state, (t) => ({
+    graphql: t.graphql ? { ...t.graphql, query } : null,
+  }))),
+  setGraphQLVariables: (variables) => set((state) => updateActiveTab(state, (t) => ({
+    graphql: t.graphql ? { ...t.graphql, variables } : null,
+  }))),
+  setGraphQLOperationName: (operationName) => set((state) => updateActiveTab(state, (t) => ({
+    graphql: t.graphql ? { ...t.graphql, operationName } : null,
+  }))),
+  setGraphQLSchema: (schemaJson) => set((state) => updateActiveTab(state, (t) => ({
+    graphql: t.graphql ? { ...t.graphql, schemaJson } : null,
+  }))),
+
   send: async () => {
     const { tabs, activeTabId } = get();
     const tab = tabs.find((t) => t.id === activeTabId);
@@ -326,12 +402,29 @@ export const useTabStore = create<TabState>((set, get) => ({
         }
       : undefined;
 
+    // Build body — for GraphQL, construct from graphql state
+    let body = tab.body.type !== "none" ? tab.body : undefined;
+    let headers = tab.headers.filter((h) => h.key.trim() !== "" && h.enabled);
+    if (tab.protocol === "graphql" && tab.graphql) {
+      const gqlBody: Record<string, unknown> = { query: tab.graphql.query };
+      try {
+        const vars = JSON.parse(tab.graphql.variables);
+        if (Object.keys(vars).length > 0) gqlBody.variables = vars;
+      } catch { /* ignore invalid JSON */ }
+      if (tab.graphql.operationName) gqlBody.operationName = tab.graphql.operationName;
+      body = { type: "json", content: JSON.stringify(gqlBody), formData: [] };
+      // Auto-add Content-Type if not present
+      if (!headers.some((h) => h.key.toLowerCase() === "content-type")) {
+        headers = [{ key: "Content-Type", value: "application/json", enabled: true }, ...headers];
+      }
+    }
+
     const requestParams = {
-      method: tab.method,
+      method: tab.protocol === "graphql" ? ("POST" as const) : tab.method,
       url: tab.url.trim(),
-      headers: tab.headers.filter((h) => h.key.trim() !== "" && h.enabled),
+      headers,
       params: tab.params.filter((p) => p.key.trim() !== "" && p.enabled),
-      body: tab.body.type !== "none" ? tab.body : undefined,
+      body,
       auth: tab.auth.type !== "none" ? tab.auth : undefined,
       proxy,
       timeoutMs: settings.timeoutMs,
@@ -427,9 +520,9 @@ export const useTabStore = create<TabState>((set, get) => ({
 
   persistTabs: () => {
     const { tabs, activeTabId } = get();
-    // Only persist file-backed tabs
+    // Only persist file-backed tabs (exclude ephemeral WS/SSE tabs)
     const persistedTabs = tabs
-      .filter((t) => t.filePath && t.collectionPath)
+      .filter((t) => t.filePath && t.collectionPath && t.protocol !== "websocket" && t.protocol !== "sse")
       .map((t) => ({ filePath: t.filePath!, collectionPath: t.collectionPath! }));
     const activeIndex = tabs.findIndex((t) => t.id === activeTabId);
     savePersistedState({

@@ -8,6 +8,10 @@ import {
   Moon,
   FolderOpen,
   Upload,
+  Play,
+  Globe,
+  Zap,
+  Radio,
 } from "lucide-react";
 import { useTabStore } from "@/stores/tab-store";
 import { useCollectionStore } from "@/stores/collection-store";
@@ -28,6 +32,7 @@ interface CommandPaletteProps {
   onOpenChange: (open: boolean) => void;
   onOpenSettings: () => void;
   onOpenCurlImport: () => void;
+  onOpenRunner?: () => void;
 }
 
 export function CommandPalette({
@@ -35,13 +40,14 @@ export function CommandPalette({
   onOpenChange,
   onOpenSettings,
   onOpenCurlImport,
+  onOpenRunner,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const { tabs, newTab, setActiveTab } = useTabStore();
+  const { tabs, newTab, newGraphQLTab, newWebSocketTab, newSSETab, setActiveTab } = useTabStore();
   const { collections } = useCollectionStore();
   const { environments, setActiveEnvironment } = useEnvironmentStore();
   const { settings, updateSettings } = useSettingsStore();
@@ -54,10 +60,31 @@ export function CommandPalette({
     // Static commands
     cmds.push({
       id: "new-request",
-      label: "New Request",
+      label: "New HTTP Request",
       category: "General",
       icon: Plus,
       action: () => { newTab(); onOpenChange(false); },
+    });
+    cmds.push({
+      id: "new-graphql",
+      label: "New GraphQL Request",
+      category: "General",
+      icon: Globe,
+      action: () => { newGraphQLTab(); onOpenChange(false); },
+    });
+    cmds.push({
+      id: "new-websocket",
+      label: "New WebSocket Connection",
+      category: "General",
+      icon: Zap,
+      action: () => { newWebSocketTab(); onOpenChange(false); },
+    });
+    cmds.push({
+      id: "new-sse",
+      label: "New SSE Connection",
+      category: "General",
+      icon: Radio,
+      action: () => { newSSETab(); onOpenChange(false); },
     });
     cmds.push({
       id: "open-settings",
@@ -83,6 +110,16 @@ export function CommandPalette({
         onOpenChange(false);
       },
     });
+
+    if (onOpenRunner) {
+      cmds.push({
+        id: "run-collection",
+        label: "Run Collection",
+        category: "General",
+        icon: Play,
+        action: () => { onOpenRunner(); onOpenChange(false); },
+      });
+    }
 
     // Switch tab commands
     for (const tab of tabs) {
@@ -125,7 +162,7 @@ export function CommandPalette({
     }
 
     return cmds;
-  }, [tabs, collections, environments, settings.theme, newTab, setActiveTab, setActiveEnvironment, openTab, updateSettings, onOpenChange, onOpenSettings, onOpenCurlImport]);
+  }, [tabs, collections, environments, settings.theme, newTab, newGraphQLTab, newWebSocketTab, newSSETab, setActiveTab, setActiveEnvironment, openTab, updateSettings, onOpenChange, onOpenSettings, onOpenCurlImport, onOpenRunner]);
 
   // Filter commands by query (fuzzy match)
   const filtered = useMemo(() => {
