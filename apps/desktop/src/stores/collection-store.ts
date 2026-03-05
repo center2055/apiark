@@ -93,7 +93,9 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         console.warn("Failed to start file watcher:", err),
       );
     } catch (err) {
-      console.error("Failed to open collection:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to open collection: ${err}`),
+      );
       throw err;
     }
   },
@@ -119,7 +121,9 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         console.warn("Failed to start file watcher:", err),
       );
     } catch (err) {
-      console.error("Migration failed:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Collection migration failed: ${err}`),
+      );
     }
   },
 
@@ -136,7 +140,9 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         readOnlyPaths: new Set([...state.readOnlyPaths, prompt.path]),
       }));
     } catch (err) {
-      console.error("Failed to open collection read-only:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to open collection: ${err}`),
+      );
     }
   },
 
@@ -158,7 +164,9 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         ),
       }));
     } catch (err) {
-      console.error("Failed to refresh collection:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to refresh collection: ${err}`),
+      );
     }
   },
 

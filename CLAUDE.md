@@ -40,6 +40,8 @@
 36. [Backup & State Export](#36-backup--state-export)
 37. [Cookie Jar Management](#37-cookie-jar-management)
 38. [Proxy Capture Mode](#38-proxy-capture-mode)
+39. [Competitive Design Analysis & UI Strategy](#39-competitive-design-analysis--ui-strategy)
+40. [UI/UX Improvement Roadmap — Phased](#40-uiux-improvement-roadmap--phased)
 
 ---
 
@@ -1696,6 +1698,401 @@ This is similar to Charles Proxy, Fiddler, or mitmproxy, but integrated directly
 - Clear UI indicator when proxy mode is active (colored bar at top of window).
 - Easy one-click stop: same button that started it.
 - On app quit while proxy is running: stop proxy, show reminder to reconfigure browser proxy settings.
+
+---
+
+---
+
+## 39. Competitive Design Analysis & UI Strategy
+
+### 39.1 Competitor Breakdown (as of March 2026)
+
+#### Postman — The Bloated Giant
+
+| Aspect | Detail |
+|--------|--------|
+| **Design philosophy** | "Everything for everyone" — comprehensive but overwhelming |
+| **Strengths** | Unified workbench, two-pane view, polished dark mode, AI integration (Postbot) |
+| **Weaknesses** | Feature creep / visual clutter, upsell banners, forced login wall, 10-30s startup, 300-800MB RAM, 4 sidebar tabs create cognitive overhead |
+| **User sentiment** | Widespread complaints on HN, Reddit, GitHub about bloat and slowness. 30K-workspace data leak in 2024 destroyed trust. Free tier reduced to 25 runs/month and 3 collaborators |
+| **Our advantage** | Zero login, zero cloud, 5-10x less RAM, <2s startup, no upsell clutter |
+
+#### Insomnia — Identity Crisis
+
+| Aspect | Detail |
+|--------|--------|
+| **Design philosophy** | "Clean, then Kong happened" — originally best-in-class, now diluted |
+| **Strengths** | Great GraphQL support, distinctive purple/dark aesthetic |
+| **Weaknesses** | Trust destroyed in 2023 (forced cloud sync, uploaded secrets without consent). Original creator left and built Yaak. Still Electron (200-400MB RAM). Minor UX updates only |
+| **User sentiment** | Community contribution slowed. Developer trust is irreversible once broken |
+| **Our advantage** | "Zero login, zero cloud" is permanent. Local-first by design, not by policy |
+
+#### Bruno — The Closest Competitor
+
+| Aspect | Detail |
+|--------|--------|
+| **Design philosophy** | "Local-first, git-friendly, developer-owned" |
+| **v3 (Jan 2026)** | Complete UI refresh (cleaner layouts, unified theming, improved typography), YAML support (new), in-app terminal, Git UI overhaul, workspaces |
+| **Strengths** | 48K+ GitHub stars, fast shipping cadence, strong community, lightweight |
+| **Weaknesses** | Still Electron (150-300MB RAM), no mock servers, no monitoring, no gRPC, no SSE, custom `.bru` format is non-standard, UI is functional but not beautiful, no code gen, no response diff, no plugin system |
+| **User sentiment** | Loved for being anti-Postman. v3 YAML support shows they're converging on our format strategy |
+| **Our advantage** | Tauri (native speed), gRPC + SSE + mock servers + monitors + collection runner + docs gen + response diff — more features at lower resource cost. Must match their developer experience while surpassing visual quality |
+
+#### Hoppscotch — The Design Benchmark
+
+| Aspect | Detail |
+|--------|--------|
+| **Design philosophy** | "Minimalist, fast, beautiful" — the visual gold standard |
+| **Strengths** | Best UI in the API client space. 9 accent colors (Green, Teal, Blue, Indigo, Purple, Yellow, Orange, Red, Pink). 4 themes (System, Light, Dark, Black/OLED). Tauri desktop. Web-first instant access. <50MB RAM. Free unlimited collaboration |
+| **Weaknesses** | No gRPC, no mock servers, no monitoring, limited scripting, no collection runner, no CLI, web-first = limited offline, IndexedDB (not filesystem/git-friendly), no API docs gen |
+| **User sentiment** | Loved for design and speed. Chosen by developers who value aesthetics and simplicity |
+| **Our advantage** | Match their visual quality, offer 3x the features. Desktop-first = better for enterprise. YAML filesystem = git-native |
+
+### 39.2 Why Developers Switch Away from Postman
+
+Based on community research (HN, Reddit, GitHub, Gartner, G2 reviews):
+
+1. **Performance**: Slow startup (10-30s), high RAM (300-800MB), Electron bloat
+2. **Forced accounts**: Can't use without login since 2023 — privacy/compliance nightmare
+3. **Cost**: Free tier increasingly restrictive ($14-19/user/mo for teams, 25 runs/month)
+4. **Feature overload**: UI clutter, panels everywhere, upsell modals interrupt flow
+5. **Trust**: 30K-workspace data leak (Dec 2024), scratchpad removal controversy
+6. **Vendor lock-in**: Proprietary format, cloud-dependent workflows
+7. **AI fatigue**: AI credits with unpredictable costs, features feel gimmicky
+
+### 39.3 What Attracts Developers to New Tools
+
+1. **Speed**: Instant startup, low RAM — the first thing every review mentions
+2. **Privacy**: No login, no cloud, no telemetry — increasingly demanded post-Postman leak
+3. **Git-native**: Collections as files, versionable, diffable — how modern teams work
+4. **Clean UI**: Minimalist, focused, no clutter — Hoppscotch proves this wins hearts
+5. **Dark mode**: Table stakes in 2026. Every developer tool must have it
+6. **Personalization**: Accent colors, theme choices — makes the tool feel "mine"
+7. **Painless switching**: Import from existing tool in seconds
+8. **Open source**: Trust through transparency, community contributions
+
+### 39.4 ApiArk's Current UI State
+
+**Strengths:**
+- Cohesive light theme with proper contrast ratios and CSS custom properties
+- Consistent micro-interactions (200ms transitions, smooth DnD)
+- Strong accessibility (WCAG 2.1 AA, prefers-reduced-motion, focus indicators, ARIA)
+- Professional polish (subtle shadows, rounded corners, proper spacing)
+- Monaco integration with custom theme and syntax highlighting
+- Solid empty states with action buttons
+- Toast notification system for all error states
+
+**Critical Gaps:**
+- **No dark mode** — single light theme only. Dealbreaker for most developers
+- **No accent color customization** — Hoppscotch has 9, we have 1 (indigo)
+- **No OLED/Black theme** — growing demand for true-black
+- **Single light Monaco theme** — code editors look wrong without dark variant
+- **No skeleton loading states** — blank space during large collection loads
+- **Limited custom animations** — only toast has @keyframes, everything else is basic Tailwind
+- **No visual branding distinction** — needs a signature design element
+- **No in-app terminal** — Bruno v3 has it, developers expect it
+
+### 39.5 Design Principles for ApiArk UI
+
+1. **"Power without clutter"** — More features than Postman, cleaner than Hoppscotch
+2. **"Dark-first, light-available"** — Default to dark theme, match developer expectations
+3. **"Yours to customize"** — Accent colors, themes, layout flexibility
+4. **"Zero to request in 30 seconds"** — Launch, type URL, hit Enter, see response. No friction
+5. **"IDE-native feel"** — Command palette, keyboard-first, split panes, activity bar
+6. **"Animations with purpose"** — Micro-interactions communicate state, not decoration
+7. **"Respect system preferences"** — Honor prefers-color-scheme, prefers-reduced-motion, prefers-contrast
+
+---
+
+## 40. UI/UX Improvement Roadmap — Phased
+
+### Phase A — Visual Foundation (Immediate Priority)
+
+These changes are **adoption blockers**. Without them, developers will dismiss ApiArk on first impression.
+
+#### A.1 Dark Mode + Theme System
+- [ ] Define dark theme CSS custom properties in `global.css` under `[data-theme="dark"]`
+  ```
+  --color-bg: #0a0a0b
+  --color-surface: #141416
+  --color-elevated: #1c1c1f
+  --color-border: #2a2a2e
+  --color-text-primary: #e4e4e7
+  --color-text-secondary: #a1a1aa
+  --color-text-muted: #71717a
+  --color-text-dimmed: #52525b
+  --color-accent: #6366f1 (indigo — same across themes)
+  --color-accent-hover: #818cf8
+  --color-accent-glow: rgba(99, 102, 241, 0.15)
+  --color-activity-bar: #0f0f11
+  --color-card: #18181b
+  --color-card-hover: #1f1f23
+  --color-success: #22c55e
+  --color-warning: #eab308
+  --color-error: #ef4444
+  ```
+- [ ] Define black/OLED theme under `[data-theme="black"]`
+  ```
+  --color-bg: #000000
+  --color-surface: #0a0a0a
+  --color-elevated: #141414
+  --color-border: #1f1f1f
+  (text and accent same as dark)
+  ```
+- [ ] Refine light theme — keep current palette, ensure `[data-theme="light"]` selector
+- [ ] Add `[data-theme="system"]` that maps to `prefers-color-scheme` media query
+- [ ] Theme switcher in settings: Light / Dark / Black / System (default: System)
+- [ ] Persist theme choice in `settings.json` via `useSettingsStore`
+- [ ] Apply `data-theme` attribute to `<html>` element on app load and theme change
+- [ ] All existing components already use `var(--color-*)` — theme switch is CSS-only, zero component changes
+
+#### A.2 Dark Monaco Editor Theme
+- [ ] Define `APIARK_DARK_THEME` in `code-editor.tsx` matching dark/black palette
+  ```typescript
+  const APIARK_DARK_THEME = {
+    base: "vs-dark",
+    rules: [
+      { token: "comment", foreground: "6b7280", fontStyle: "italic" },
+      { token: "keyword", foreground: "a78bfa" },     // violet-400
+      { token: "string", foreground: "34d399" },       // emerald-400
+      { token: "number", foreground: "fbbf24" },       // amber-400
+      { token: "type", foreground: "818cf8" },          // indigo-400
+      { token: "variable", foreground: "60a5fa" },     // blue-400
+    ],
+    colors: {
+      "editor.background": "#141416",
+      "editor.foreground": "#e4e4e7",
+      "editor.lineHighlightBackground": "#1c1c1f",
+      "editor.selectionBackground": "#6366f140",
+      "editorCursor.foreground": "#6366f1",
+    }
+  }
+  ```
+- [ ] Switch Monaco theme based on active app theme (light → `apiark-light`, dark/black → `apiark-dark`)
+- [ ] Ensure JSON/XML/YAML/JS/TS syntax themes are readable in both modes
+
+#### A.3 Accent Color System
+- [ ] Define 8 accent color presets as CSS custom property overrides:
+  - **Indigo** (default): `#6366f1` / `#818cf8`
+  - **Blue**: `#3b82f6` / `#60a5fa`
+  - **Emerald**: `#10b981` / `#34d399`
+  - **Amber**: `#f59e0b` / `#fbbf24`
+  - **Rose**: `#f43f5e` / `#fb7185`
+  - **Violet**: `#8b5cf6` / `#a78bfa`
+  - **Cyan**: `#06b6d4` / `#22d3ee`
+  - **Orange**: `#f97316` / `#fb923c`
+- [ ] Each preset overrides: `--color-accent`, `--color-accent-hover`, `--color-accent-glow`
+- [ ] Accent color picker in Settings (row of colored circles, click to select)
+- [ ] Persist accent choice in `settings.json`
+- [ ] Apply via `data-accent` attribute on `<html>` or by directly setting CSS variables
+
+#### A.4 Syntax-Highlighted HTTP Method Colors (Dark Mode Variants)
+- [ ] Adjust method badge colors for readability on dark backgrounds
+- [ ] GET: emerald-400, POST: amber-400, PUT: blue-400, PATCH: violet-400, DELETE: red-400, HEAD: cyan-400, OPTIONS: gray-400
+- [ ] Ensure 4.5:1 contrast ratio on dark `--color-surface` background
+
+### Phase B — Visual Polish (High Impact, Low Effort)
+
+These changes elevate ApiArk from "functional" to "premium".
+
+#### B.1 Skeleton Loading States
+- [ ] Create `Skeleton` component: animated gradient shimmer on `--color-elevated` background
+  ```tsx
+  // Reusable: <Skeleton className="h-4 w-32" />
+  // Shimmer animation: background gradient slides left-to-right, 1.5s infinite
+  ```
+- [ ] Collection tree skeleton: 8-10 rows of varying widths while YAML parsing
+- [ ] Response panel skeleton: 3 lines + header while waiting for response
+- [ ] History panel skeleton: 5 rows while loading SQLite data
+
+#### B.2 Enhanced Animations & Micro-Interactions
+- [ ] Tab switch: Subtle slide transition (150ms) when switching between tabs
+- [ ] Panel resize: Smooth transition when resizing request/response split
+- [ ] Sidebar collapse: Animated width transition (200ms ease-out) instead of instant hide
+- [ ] Method dropdown: Scale-in animation (150ms) when opening
+- [ ] Status code badge: Brief color pulse (300ms) on response received
+- [ ] Success feedback: Send button briefly flashes green on 2xx response
+- [ ] Error feedback: Send button briefly flashes red on error
+- [ ] Toast entrance: Slide-up + fade-in (already exists, refine with spring easing)
+- [ ] All animations respect `prefers-reduced-motion: reduce`
+
+#### B.3 Empty State Illustrations
+- [ ] Design simple, monochrome SVG illustrations for key empty states:
+  - **No response**: Rocket/satellite icon with subtle orbit line
+  - **No collections**: Open folder icon with plus
+  - **No history**: Clock icon with empty face
+  - **No test results**: Clipboard/checklist icon
+  - **No environments**: Gear/variables icon
+  - **Error state**: Warning triangle with gentle pulse
+- [ ] Style: Monochrome using `--color-text-dimmed`, 64x64px, centered above text
+- [ ] Illustrations must work in both light and dark themes (use currentColor)
+
+#### B.4 Improved Send Button States
+- [ ] Idle: Accent color with method icon
+- [ ] Hover: Slight brightness increase + subtle glow shadow
+- [ ] Sending: Spinner replaces icon + progress pulse on button border
+- [ ] Success (2xx): Brief green flash (300ms), then return to idle
+- [ ] Error (4xx/5xx/network): Brief red flash (300ms), then return to idle
+- [ ] Cancel: Show "Cancel" text + X icon while request is in-flight
+
+#### B.5 Response Status Animations
+- [ ] Status code badge: Fade-in (150ms) when response arrives
+- [ ] Response time: Count-up animation from 0 to final value (200ms)
+- [ ] Response size: Fade-in with the status code
+- [ ] Response body: Fade-in (100ms) after status bar animation completes
+
+### Phase C — Layout & Navigation (Medium Effort, High Value)
+
+#### C.1 Activity Bar Icons Polish
+- [ ] Add subtle hover tooltip with label (not just icon)
+- [ ] Active indicator: Accent-colored left border (2px) like VS Code
+- [ ] Icon badges: Notification dot on activity bar icon (e.g., running monitor count)
+- [ ] Smooth icon transition on section switch
+
+#### C.2 Resizable Panels
+- [ ] Draggable divider between request and response panels
+- [ ] Double-click divider to reset to 50/50
+- [ ] Collapse response panel entirely (maximize request editor)
+- [ ] Collapse request panel entirely (maximize response viewer)
+- [ ] Persist panel ratio in `state.json`
+- [ ] Minimum panel width: 200px
+
+#### C.3 Layout Options
+- [ ] Request/Response layout setting: Side-by-side (default) | Stacked (top/bottom) | Response-only
+- [ ] Layout toggle button in the response panel header
+- [ ] Persist layout choice per-tab or globally
+
+#### C.4 Breadcrumb Navigation
+- [ ] Show collection → folder → request path below the tab bar
+- [ ] Each segment clickable (navigates to parent folder in sidebar)
+- [ ] Truncate long paths with ellipsis in the middle
+
+#### C.5 Status Bar (Bottom)
+- [ ] Persistent bottom status bar (24px height) showing:
+  - Active environment name (click to switch)
+  - Active collection name
+  - Mock server status (if running)
+  - Monitor status (if any active)
+  - Notification count
+- [ ] Matches VS Code's status bar pattern — developers expect this
+
+### Phase D — Advanced UX Features (Higher Effort)
+
+#### D.1 In-App Terminal
+- [ ] Embedded terminal panel (bottom, toggleable with `Ctrl+`` `)
+- [ ] Uses system shell (bash/zsh on Unix, PowerShell on Windows)
+- [ ] xterm.js for terminal rendering (lightweight, widely used)
+- [ ] Theme matches app theme (dark terminal in dark mode)
+- [ ] Pre-configured with `apiark` CLI if installed
+- [ ] Useful for: git operations, cURL commands, script debugging
+
+#### D.2 Request/Response Split View Modes
+- [ ] Horizontal split (request left, response right) — current default
+- [ ] Vertical split (request top, response bottom)
+- [ ] Tabbed (request and response as separate tabs in the same area)
+- [ ] Pop-out response (floating window)
+- [ ] Quick toggle via keyboard shortcut (`Ctrl+Shift+L`)
+
+#### D.3 Zen Mode
+- [ ] Hide everything except the active request/response (`Ctrl+Shift+Z`)
+- [ ] No sidebar, no tabs, no status bar — maximum focus
+- [ ] Press Escape to exit zen mode
+- [ ] Useful for focused debugging of a single request
+
+#### D.4 Request Pinning & Favorites
+- [ ] Pin frequently-used requests to the top of the sidebar
+- [ ] Star/favorite collections for quick access
+- [ ] "Recent" section in command palette showing last 5 requests
+
+#### D.5 Customizable Keyboard Shortcuts
+- [ ] Settings → Keyboard Shortcuts panel
+- [ ] Searchable list of all shortcuts
+- [ ] Click to rebind any shortcut
+- [ ] Import/export shortcut profiles
+- [ ] Vim/Emacs keybinding presets for Monaco editor
+
+### Phase E — Branding & Marketing Design
+
+#### E.1 Visual Signature
+- [ ] ApiArk's visual signature: The **activity bar with protocol-colored icons** — each protocol (HTTP, GraphQL, gRPC, WebSocket, SSE) has its own colored icon, creating a distinctive rainbow sidebar strip
+- [ ] This should be prominent in all screenshots and marketing materials
+
+#### E.2 App Icon & Branding
+- [ ] Professional app icon: Stylized ark/ship with API wave motif
+- [ ] Icon variants: macOS (rounded square), Windows (sharp), Linux (circle)
+- [ ] Favicon for website
+- [ ] Consistent accent indigo in all branding materials
+
+#### E.3 GitHub README
+- [ ] Hero GIF: 10-second loop showing launch → type URL → send → see response (dark mode)
+- [ ] Feature badges with icons (protocols, tests, mock servers, etc.)
+- [ ] Side-by-side RAM comparison chart (Postman 800MB vs ApiArk 60MB)
+- [ ] Screenshot gallery showing: dark mode, light mode, GraphQL, gRPC, collection runner
+- [ ] "Switch in 60 seconds" import section
+
+#### E.4 Comparison Landing Pages
+- [ ] `apiark.dev/compare/postman` — focus on speed, privacy, cost
+- [ ] `apiark.dev/compare/bruno` — focus on protocols, features, native speed
+- [ ] `apiark.dev/compare/hoppscotch` — focus on features, offline, git-native
+- [ ] `apiark.dev/compare/insomnia` — focus on trust, local-first, no cloud surprises
+- [ ] Each page: feature comparison table + testimonial quotes + import CTA
+
+#### E.5 Launch Strategy
+- [ ] "Show HN" post with compelling demo video (30 seconds)
+- [ ] Post on r/webdev, r/programming with dark-mode screenshot and RAM comparison stat
+- [ ] Viral stat: *"Postman uses 800MB of RAM. ApiArk uses 60MB."*
+- [ ] Tweet thread: "Why we built yet another API client" — focus on the anti-Postman narrative
+- [ ] Dev.to article: "From Postman to ApiArk in 60 seconds" — migration guide
+- [ ] Positioning: *"No login. No cloud. No bloat."*
+
+### Phase F — Continuous Design Refinement
+
+#### F.1 A/B Testing Framework
+- [ ] Feature flag system for UI experiments (localStorage-based, no remote)
+- [ ] Track which UI patterns lead to faster task completion
+- [ ] Community feedback form accessible from Settings → Feedback
+
+#### F.2 Design Token System
+- [ ] Extract all CSS custom properties into a formal design token file
+- [ ] Document color, spacing, typography, shadow, and animation tokens
+- [ ] Ensure tokens are the single source of truth for all styling
+- [ ] Support future plugin theming via token override
+
+#### F.3 Component Library Documentation
+- [ ] Internal Storybook (or similar) for all UI primitives
+- [ ] Visual regression testing with Percy or Chromatic
+- [ ] Ensure design consistency across 60+ components
+
+#### F.4 User Research
+- [ ] In-app "Quick Feedback" button (optional, opens GitHub issue template)
+- [ ] Quarterly UX audit against WCAG 2.1 AA
+- [ ] Monitor GitHub issues tagged `ux` or `ui` for patterns
+- [ ] Community Discord/forum for design discussion
+
+### 40.1 Implementation Priority Summary
+
+| Phase | Description | Impact | Effort | Blocks Adoption? |
+|-------|-------------|--------|--------|-------------------|
+| **A** | Dark mode + accent colors + Monaco dark theme | Critical | 2-3 days | **YES** |
+| **B** | Skeleton loading, animations, empty state SVGs, send button states | High | 2-3 days | No |
+| **C** | Resizable panels, layout options, status bar, breadcrumbs | High | 3-5 days | No |
+| **D** | In-app terminal, zen mode, request pinning, custom shortcuts | Medium | 5-7 days | No |
+| **E** | Branding, README, comparison pages, launch strategy | High | 3-5 days | No (but blocks growth) |
+| **F** | Design tokens, component docs, user research | Low (maintenance) | Ongoing | No |
+
+### 40.2 Success Metrics
+
+| Metric | Target | How to Measure |
+|--------|--------|----------------|
+| GitHub stars (first week) | 500+ | GitHub API |
+| GitHub stars (first month) | 2,000+ | GitHub API |
+| Downloads (first month) | 5,000+ | GitHub releases + website |
+| HN front page | Top 10 | Manual |
+| RAM usage (measured) | <80MB idle | CI benchmark |
+| Startup time (measured) | <2s cold start | CI benchmark |
+| Dark mode usage | >70% of users | Opt-in analytics (if implemented) |
+| Import success rate | >95% | Error tracking |
+| "Switching from Postman" mentions | 50+ in first month | Social monitoring |
 
 ---
 

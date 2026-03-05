@@ -220,7 +220,11 @@ export function CommandPalette({
           category: "Export",
           icon: Download,
           action: () => {
-            exportCollectionToFile(col.path, col.name, format).catch(console.error);
+            exportCollectionToFile(col.path, col.name, format).catch((err: unknown) =>
+              import("@/stores/toast-store").then(({ useToastStore }) =>
+                useToastStore.getState().showError(`Export failed: ${err}`),
+              ),
+            );
             onOpenChange(false);
           },
         });

@@ -231,7 +231,9 @@ export function CollectionTree({
         await saveFolderOrder(activeFlat.parentDir, order);
         await refreshCollection(collectionPath);
       } catch (err) {
-        console.error("Failed to save folder order:", err);
+        import("@/stores/toast-store").then(({ useToastStore }) =>
+          useToastStore.getState().showError(`Failed to reorder items: ${err}`),
+        );
       }
     },
     [flatNodes, refreshCollection, collectionPath],
@@ -377,7 +379,9 @@ function TreeNodeRow({
       const path = await createRequest(dir, filename, name, collectionPath);
       await openTab(path, collectionPath);
     } catch (err) {
-      console.error("Failed to create request:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to create request: ${err}`),
+      );
     }
   };
 
@@ -389,7 +393,9 @@ function TreeNodeRow({
     try {
       await createFolder(dir, name);
     } catch (err) {
-      console.error("Failed to create folder:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to create folder: ${err}`),
+      );
     }
   };
 
@@ -399,7 +405,9 @@ function TreeNodeRow({
     try {
       await deleteItem(node.path, collectionName, collectionPath);
     } catch (err) {
-      console.error("Failed to delete:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to delete: ${err}`),
+      );
     }
   };
 
@@ -415,7 +423,9 @@ function TreeNodeRow({
     try {
       await renameItem(node.path, renameValue.trim(), collectionPath);
     } catch (err) {
-      console.error("Failed to rename:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to rename: ${err}`),
+      );
     }
   };
 
@@ -531,7 +541,11 @@ function TreeNodeRow({
                     icon: Download,
                     onClick: () => {
                       closeContextMenu();
-                      exportCollectionToFile(node.path, node.name, "postman").catch(console.error);
+                      exportCollectionToFile(node.path, node.name, "postman").catch((err: unknown) =>
+                        import("@/stores/toast-store").then(({ useToastStore }) =>
+                          useToastStore.getState().showError(`Export failed: ${err}`),
+                        ),
+                      );
                     },
                   },
                   {
@@ -539,7 +553,11 @@ function TreeNodeRow({
                     icon: Download,
                     onClick: () => {
                       closeContextMenu();
-                      exportCollectionToFile(node.path, node.name, "openapi").catch(console.error);
+                      exportCollectionToFile(node.path, node.name, "openapi").catch((err: unknown) =>
+                        import("@/stores/toast-store").then(({ useToastStore }) =>
+                          useToastStore.getState().showError(`Export failed: ${err}`),
+                        ),
+                      );
                     },
                   },
                   {
@@ -547,7 +565,11 @@ function TreeNodeRow({
                     icon: Download,
                     onClick: () => {
                       closeContextMenu();
-                      exportCollectionToFile(node.path, node.name, "apiark").catch(console.error);
+                      exportCollectionToFile(node.path, node.name, "apiark").catch((err: unknown) =>
+                        import("@/stores/toast-store").then(({ useToastStore }) =>
+                          useToastStore.getState().showError(`Export failed: ${err}`),
+                        ),
+                      );
                     },
                   },
                   {
@@ -607,7 +629,12 @@ function CookieSettingsDialog({
   useEffect(() => {
     getCollectionDefaults(collectionPath)
       .then((d) => { setDefaults(d); setLoading(false); })
-      .catch((e) => { console.error("Failed to load collection defaults:", e); setLoading(false); });
+      .catch((e) => {
+        import("@/stores/toast-store").then(({ useToastStore }) =>
+          useToastStore.getState().showError(`Failed to load collection defaults: ${e}`),
+        );
+        setLoading(false);
+      });
   }, [collectionPath]);
 
   const toggle = async (field: keyof CollectionDefaults, value: boolean) => {
@@ -617,7 +644,9 @@ function CookieSettingsDialog({
     try {
       await updateCollectionDefaults(collectionPath, updated);
     } catch (e) {
-      console.error("Failed to update collection defaults:", e);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to update collection defaults: ${e}`),
+      );
     }
   };
 

@@ -26,7 +26,9 @@ export function CookieJarDialog({
       const result = await getCookieJar(collectionPath);
       setCookies(result);
     } catch (err) {
-      console.error("Failed to load cookies:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to load cookies: ${err}`),
+      );
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,9 @@ export function CookieJarDialog({
       await deleteCookie(collectionPath, name, domain);
       setCookies((prev) => prev.filter((c) => !(c.name === name && c.domain === domain)));
     } catch (err) {
-      console.error("Failed to delete cookie:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to delete cookie: ${err}`),
+      );
     }
   };
 
@@ -52,7 +56,9 @@ export function CookieJarDialog({
       await clearCookieJar(collectionPath);
       setCookies([]);
     } catch (err) {
-      console.error("Failed to clear cookies:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to clear cookies: ${err}`),
+      );
     }
   };
 

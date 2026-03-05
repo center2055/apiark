@@ -25,7 +25,9 @@ export function WelcomeScreen({
       await updateSettings({ onboardingComplete: true });
       onComplete(true);
     } catch (err) {
-      console.error("Failed to create sample collection:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to create sample collection: ${err}`),
+      );
     } finally {
       setLoading(false);
     }
@@ -46,7 +48,9 @@ export function WelcomeScreen({
         onComplete();
       }
     } catch (err) {
-      console.error("Failed to open folder:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to open folder: ${err}`),
+      );
     }
   };
 

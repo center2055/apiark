@@ -25,7 +25,9 @@ export const useHistoryStore = create<HistoryState>((set) => ({
       const entries = await getHistoryApi();
       set({ entries, loading: false });
     } catch (err) {
-      console.error("Failed to load history:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showWarning("Could not load request history"),
+      );
       set({ loading: false });
     }
   },
@@ -36,7 +38,9 @@ export const useHistoryStore = create<HistoryState>((set) => ({
       const entries = await searchHistoryApi(query);
       set({ entries, loading: false });
     } catch (err) {
-      console.error("Failed to search history:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`History search failed: ${err}`),
+      );
       set({ loading: false });
     }
   },
@@ -46,7 +50,9 @@ export const useHistoryStore = create<HistoryState>((set) => ({
       await clearHistoryApi();
       set({ entries: [] });
     } catch (err) {
-      console.error("Failed to clear history:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to clear history: ${err}`),
+      );
     }
   },
 }));

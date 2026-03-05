@@ -244,7 +244,9 @@ function ResponseBodyActions({ body }: { body: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError("Failed to copy to clipboard"),
+      );
     }
   };
 
@@ -262,7 +264,9 @@ function ResponseBodyActions({ body }: { body: string }) {
         await writeTextFile(filePath, body);
       }
     } catch (err) {
-      console.error("Failed to save response:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to save response: ${err}`),
+      );
     }
   };
 
@@ -420,7 +424,9 @@ function TruncationBanner({ response }: { response: { truncated?: boolean; fullS
       // Update the tab's response body in-place
       useTabStore.getState().updateResponse(tab.id, { body: fullBody, truncated: false });
     } catch (err) {
-      console.error("Failed to load full response:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to load full response: ${err}`),
+      );
     } finally {
       setLoading(false);
     }

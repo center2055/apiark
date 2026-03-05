@@ -35,6 +35,7 @@ import { ConsoleBottomBar } from "@/components/console/console-panel";
 import { useCollectionStore } from "@/stores/collection-store";
 import { AiAssistantDialog } from "@/components/ai/ai-assistant-dialog";
 import { AlertCircle, X, RefreshCw, FileX, GitMerge, Shield, ArrowRightLeft } from "lucide-react";
+import { ToastContainer } from "@/components/ui/toast-container";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useResponsive } from "@/hooks/use-responsive";
 
@@ -324,6 +325,7 @@ function App() {
       <DocsDialogWrapper />
       {showTour && <GuidedTour onComplete={() => setShowTour(false)} />}
       <MigrationDialog />
+      <ToastContainer />
     </div>
   );
 }

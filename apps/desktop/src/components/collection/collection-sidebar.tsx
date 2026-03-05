@@ -44,7 +44,9 @@ export function CollectionSidebar({ onOpenSettings, collapsed, envSelectorRef }:
         await openCollection(selected as string);
       }
     } catch (err) {
-      console.error("Failed to open folder:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to open folder: ${err}`),
+      );
     }
   };
 

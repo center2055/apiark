@@ -389,7 +389,8 @@ export const useTabStore = create<TabState>((set, get) => ({
           activeTabId: tab.id,
         }));
       } else {
-        console.error("Failed to open request file:", err);
+        const { useToastStore } = await import("@/stores/toast-store");
+        useToastStore.getState().showError(`Failed to open request: ${String((err as { message?: string })?.message ?? err)}`);
       }
     }
   },
@@ -616,7 +617,9 @@ export const useTabStore = create<TabState>((set, get) => ({
         ),
       });
     } catch (err) {
-      console.error("Failed to save request:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to save request: ${String(err)}`)
+      );
     }
   },
 
@@ -757,7 +760,9 @@ export const useTabStore = create<TabState>((set, get) => ({
       // Close the tab in the current window — the new window will load its own state
       get().closeTab(id);
     } catch (err) {
-      console.error("Failed to detach tab:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError("Failed to open new window. Please try again.")
+      );
     }
   },
 
@@ -782,7 +787,7 @@ export const useTabStore = create<TabState>((set, get) => ({
       tabs: persistedTabs,
       activeTabIndex: activeIndex >= 0 ? activeIndex : null,
       windowState,
-    }).catch((err) => console.error("Failed to persist tabs:", err));
+    }).catch(() => { /* Tab persistence failure is non-critical */ });
   },
 
   restoreTabs: async () => {
@@ -811,7 +816,9 @@ export const useTabStore = create<TabState>((set, get) => ({
         }
       }
     } catch (err) {
-      console.error("Failed to restore tabs:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showWarning("Some tabs could not be restored from your last session.")
+      );
     }
   },
 }));

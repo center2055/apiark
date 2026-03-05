@@ -38,7 +38,9 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => ({
           (envs.length > 0 ? envs[0].name : null),
       });
     } catch (err) {
-      console.error("Failed to load environments:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to load environments: ${err}`),
+      );
     }
   },
 
@@ -61,7 +63,9 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => ({
         const rootVars = await loadRootDotenv(activeCollectionPath);
         return { ...rootVars, ...runtimeOverrides };
       } catch (err) {
-        console.error("Failed to load root .env:", err);
+        import("@/stores/toast-store").then(({ useToastStore }) =>
+          useToastStore.getState().showWarning("Could not load .env file"),
+        );
         return { ...runtimeOverrides };
       }
     }
@@ -72,7 +76,9 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => ({
       );
       return { ...resolved, ...runtimeOverrides };
     } catch (err) {
-      console.error("Failed to resolve variables:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to resolve variables: ${err}`),
+      );
       return { ...runtimeOverrides };
     }
   },

@@ -39,7 +39,10 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       const settings = await getSettings();
       set({ settings, loaded: true });
     } catch (err) {
-      console.error("Failed to load settings:", err);
+      // Settings load failure on startup — use defaults silently but warn
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showWarning("Could not load settings — using defaults"),
+      );
       set({ loaded: true });
     }
   },
@@ -49,7 +52,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       const settings = await updateSettingsApi(patch);
       set({ settings });
     } catch (err) {
-      console.error("Failed to update settings:", err);
+      import("@/stores/toast-store").then(({ useToastStore }) =>
+        useToastStore.getState().showError(`Failed to save settings: ${err}`),
+      );
     }
   },
 }));
