@@ -45,14 +45,14 @@ export function RequestPanel() {
     setPostResponseScript,
     setTestScript,
     setAssertions,
+    setUrl,
   } = useTabStore();
+
+  const pathVars = useMemo(() => tab ? extractPathVariables(tab.url) : [], [tab?.url]);
 
   if (!tab) return null;
 
   const { params, headers, body, auth, url } = tab;
-  const { setUrl } = useTabStore();
-
-  const pathVars = useMemo(() => extractPathVariables(url), [url]);
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">

@@ -690,7 +690,6 @@ function KeyboardShortcutsSection() {
                 {isRecording ? (
                   <span
                     className="rounded border border-[var(--color-accent)] bg-[var(--color-accent)]/10 px-2 py-0.5 text-[10px] text-[var(--color-accent)] animate-pulse"
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
                     tabIndex={0}
                     ref={(el) => {
                       if (el) {
