@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { CollectionNode } from "@apiark/types";
+import type { CollectionNode, VersionStatus } from "@apiark/types";
 import {
   openCollection as openCollectionApi,
   createRequest as createRequestApi,
@@ -9,12 +9,23 @@ import {
   watchCollection,
   unwatchCollection,
   restoreFromTrash,
+  checkCollectionVersion,
+  migrateCollection as migrateCollectionApi,
 } from "@/lib/tauri-api";
 import { useUndoStore } from "./undo-store";
+
+interface MigrationPrompt {
+  path: string;
+  status: VersionStatus;
+}
 
 interface CollectionState {
   collections: CollectionNode[];
   expandedPaths: Set<string>;
+  /** Collections opened in read-only mode (version mismatch, user declined migration) */
+  readOnlyPaths: Set<string>;
+  /** Pending migration prompt — shown as a dialog */
+  migrationPrompt: MigrationPrompt | null;
 
   openCollection: (path: string) => Promise<void>;
   closeCollection: (path: string) => void;
@@ -38,11 +49,16 @@ interface CollectionState {
     collectionPath: string,
   ) => Promise<string>;
   undoLastAction: () => Promise<void>;
+  dismissMigration: () => void;
+  acceptMigration: () => Promise<void>;
+  openReadOnly: () => Promise<void>;
 }
 
 export const useCollectionStore = create<CollectionState>((set, get) => ({
   collections: [],
   expandedPaths: new Set<string>(),
+  readOnlyPaths: new Set<string>(),
+  migrationPrompt: null,
 
   openCollection: async (path) => {
     // Don't open the same collection twice
@@ -52,18 +68,75 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
     if (existing) return;
 
     try {
+      // Check version before opening
+      const status = await checkCollectionVersion(path);
+
+      if (status.isNewer) {
+        // Collection was created with a newer version of ApiArk
+        set({ migrationPrompt: { path, status } });
+        return;
+      }
+
+      if (status.needsMigration) {
+        // Collection needs migration — prompt user
+        set({ migrationPrompt: { path, status } });
+        return;
+      }
+
+      // Version matches — open normally
       const tree = await openCollectionApi(path);
       set((state) => ({
         collections: [...state.collections, tree],
         expandedPaths: new Set([...state.expandedPaths, path]),
       }));
-      // Start watching for external file changes
       watchCollection(path).catch((err) =>
         console.warn("Failed to start file watcher:", err),
       );
     } catch (err) {
       console.error("Failed to open collection:", err);
       throw err;
+    }
+  },
+
+  dismissMigration: () => {
+    set({ migrationPrompt: null });
+  },
+
+  acceptMigration: async () => {
+    const prompt = get().migrationPrompt;
+    if (!prompt) return;
+
+    try {
+      await migrateCollectionApi(prompt.path);
+      set({ migrationPrompt: null });
+      // Now open the migrated collection
+      const tree = await openCollectionApi(prompt.path);
+      set((state) => ({
+        collections: [...state.collections, tree],
+        expandedPaths: new Set([...state.expandedPaths, prompt.path]),
+      }));
+      watchCollection(prompt.path).catch((err) =>
+        console.warn("Failed to start file watcher:", err),
+      );
+    } catch (err) {
+      console.error("Migration failed:", err);
+    }
+  },
+
+  openReadOnly: async () => {
+    const prompt = get().migrationPrompt;
+    if (!prompt) return;
+
+    try {
+      set({ migrationPrompt: null });
+      const tree = await openCollectionApi(prompt.path);
+      set((state) => ({
+        collections: [...state.collections, tree],
+        expandedPaths: new Set([...state.expandedPaths, prompt.path]),
+        readOnlyPaths: new Set([...state.readOnlyPaths, prompt.path]),
+      }));
+    } catch (err) {
+      console.error("Failed to open collection read-only:", err);
     }
   },
 

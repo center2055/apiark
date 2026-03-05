@@ -37,6 +37,7 @@ use commands::settings::{get_settings, update_settings, SettingsState};
 use commands::cookies::{get_cookie_jar, delete_cookie, clear_cookie_jar};
 use commands::grpc::{grpc_load_proto, grpc_call_unary, grpc_disconnect};
 use commands::docs::{generate_docs, preview_docs};
+use commands::migration::{check_collection_version, migrate_collection};
 use commands::mock::{start_mock_server, stop_mock_server, list_mock_servers};
 use commands::scheduler::{create_monitor, delete_monitor, toggle_monitor, list_monitors, get_monitor_results};
 use grpc::client::GrpcManager;
@@ -167,6 +168,9 @@ pub fn run() {
             create_sample_collection,
             get_collection_defaults,
             update_collection_defaults,
+            // Migration commands
+            check_collection_version,
+            migrate_collection,
             // Environment commands
             load_environments,
             save_environment,

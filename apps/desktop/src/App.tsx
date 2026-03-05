@@ -29,7 +29,9 @@ import { useDocsStore } from "@/stores/docs-store";
 import { WelcomeScreen } from "@/components/onboarding/welcome-screen";
 import { GuidedTour } from "@/components/onboarding/guided-tour";
 import { ConsoleBottomBar } from "@/components/console/console-panel";
+import { useCollectionStore } from "@/stores/collection-store";
 import { AlertCircle, X, RefreshCw, FileX, GitMerge, Shield } from "lucide-react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 function App() {
   const { newTab, closeTab, save, send, persistTabs, restoreTabs, undoTab, redoTab } = useTabStore();
@@ -255,6 +257,7 @@ function App() {
       <MonitorDialog />
       <DocsDialogWrapper />
       {showTour && <GuidedTour onComplete={() => setShowTour(false)} />}
+      <MigrationDialog />
     </div>
   );
 }
@@ -421,6 +424,72 @@ function ConflictBanner({ tabId, conflictState }: { tabId: string; conflictState
         <X className="h-3.5 w-3.5" />
       </button>
     </div>
+  );
+}
+
+function MigrationDialog() {
+  const { migrationPrompt, dismissMigration, acceptMigration, openReadOnly } =
+    useCollectionStore();
+
+  if (!migrationPrompt) return null;
+  const { status } = migrationPrompt;
+
+  return (
+    <Dialog.Root open onOpenChange={(open) => !open && dismissMigration()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl focus:outline-none">
+          <div className="border-b border-[var(--color-border)] px-6 py-4">
+            <Dialog.Title className="text-base font-semibold text-[var(--color-text-primary)]">
+              {status.isNewer ? "Newer Collection Format" : "Collection Format Upgrade"}
+            </Dialog.Title>
+          </div>
+          <div className="space-y-3 px-6 py-4">
+            {status.isNewer ? (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                This collection uses format v{status.collectionVersion}, but this
+                version of ApiArk only supports up to v{status.currentVersion}.
+                You can open it in read-only mode.
+              </p>
+            ) : (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                This collection uses format v{status.collectionVersion}. The
+                current version is v{status.currentVersion}. Would you like to
+                upgrade?
+              </p>
+            )}
+            {!status.isNewer && (
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Tip: commit your collection to Git before upgrading so you can
+                revert if needed.
+              </p>
+            )}
+          </div>
+          <div className="flex justify-end gap-2 border-t border-[var(--color-border)] px-6 py-3">
+            <button
+              onClick={dismissMigration}
+              className="rounded px-3 py-1.5 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-elevated)]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={openReadOnly}
+              className="rounded bg-[var(--color-elevated)] px-3 py-1.5 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-border)]"
+            >
+              Open Read-Only
+            </button>
+            {!status.isNewer && (
+              <button
+                onClick={acceptMigration}
+                className="rounded bg-[var(--color-accent)] px-3 py-1.5 text-sm text-white hover:opacity-90"
+              >
+                Upgrade
+              </button>
+            )}
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
 

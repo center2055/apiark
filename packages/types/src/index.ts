@@ -188,6 +188,15 @@ export interface CollectionDefaults {
   persistCookies: boolean;
 }
 
+// ── Migration ──
+
+export interface VersionStatus {
+  collectionVersion: number;
+  currentVersion: number;
+  needsMigration: boolean;
+  isNewer: boolean;
+}
+
 // ── Scripting & Testing ──
 
 export interface TestResult {

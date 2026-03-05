@@ -376,10 +376,10 @@ No tool currently delivers ALL of these simultaneously:
 - [ ] axe-core in CI for automated a11y audits
 
 **YAML Format Versioning (§21):**
-- [ ] Migration system with chained version functions (v1→v2→v3)
-- [ ] Upgrade dialog with read-only fallback
-- [ ] Deprecated field support for 2 major versions
-- [ ] Migration code in `storage/migration.rs`
+- [x] Migration system with chained version functions (v1→v2→v3)
+- [x] Upgrade dialog with read-only fallback
+- [x] Deprecated field support for 2 major versions
+- [x] Migration code in `storage/migration.rs`
 
 **Update Mechanism (§30):**
 - [ ] Tauri v2 updater plugin with signed manifests
