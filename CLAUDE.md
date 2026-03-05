@@ -350,7 +350,7 @@ No tool currently delivers ALL of these simultaneously:
 - [x] API documentation generation (HTML + Markdown export)
 - [x] OpenAPI spec editor with Spectral linting
 - [x] Plugin system (JS + WASM)
-- [ ] MQTT, Socket.IO support
+- [x] MQTT, Socket.IO support
 - [x] Response diff
 - [x] Performance profiling
 

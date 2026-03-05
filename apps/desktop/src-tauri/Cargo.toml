@@ -68,6 +68,7 @@ zip = { version = "2", default-features = false, features = ["deflate"] }
 md4 = "0.10"
 des = "0.8"
 walkdir = "2"
+rumqttc = "0.24"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]

@@ -602,3 +602,36 @@ export async function uninstallPlugin(name: string): Promise<void> {
 export async function installPlugin(path: string): Promise<PluginInfo> {
   return await invoke<PluginInfo>("install_plugin", { path });
 }
+
+// ── MQTT ──
+
+export interface MqttConnectParams {
+  brokerUrl: string;
+  port: number;
+  clientId: string;
+  username?: string;
+  password?: string;
+  keepAliveSecs?: number;
+}
+
+export async function mqttConnect(connectionId: string, params: MqttConnectParams): Promise<void> {
+  return await invoke<void>("mqtt_connect", { connectionId, params });
+}
+
+export async function mqttSubscribe(connectionId: string, topic: string, qos: number): Promise<void> {
+  return await invoke<void>("mqtt_subscribe", { connectionId, topic, qos });
+}
+
+export async function mqttPublish(connectionId: string, topic: string, payload: string, qos: number, retain: boolean): Promise<void> {
+  return await invoke<void>("mqtt_publish", { connectionId, topic, payload, qos, retain });
+}
+
+export async function mqttDisconnect(connectionId: string): Promise<void> {
+  return await invoke<void>("mqtt_disconnect", { connectionId });
+}
+
+// ── Socket.IO ──
+
+export async function socketioBuildUrl(url: string, namespace: string): Promise<string> {
+  return await invoke<string>("socketio_build_url", { url, namespace });
+}

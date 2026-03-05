@@ -1,4 +1,5 @@
 mod commands;
+mod mqtt;
 mod plugins;
 mod docs;
 mod exporter;
@@ -51,7 +52,10 @@ use commands::trash::{list_trash, restore_from_trash, empty_trash};
 use commands::watcher::{watch_collection, unwatch_collection};
 use commands::window::open_new_window;
 use commands::plugins::{list_plugins, toggle_plugin, uninstall_plugin, install_plugin};
+use commands::mqtt::{mqtt_connect, mqtt_subscribe, mqtt_publish, mqtt_disconnect};
+use commands::socketio::socketio_build_url;
 use plugins::manager::PluginManager;
+use mqtt::client::MqttManager;
 use oauth::OAuthTokenStore;
 use http::cookies::CookieJarManager;
 use watcher::collection_watcher::CollectionWatcher;
@@ -158,6 +162,7 @@ pub fn run() {
         .manage(MockServerManager::new())
         .manage(MonitorManager::new())
         .manage(PluginManager::new(&apiark_dir))
+        .manage(MqttManager::new())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
@@ -257,6 +262,13 @@ pub fn run() {
             deactivate_license,
             // Window commands
             open_new_window,
+            // Socket.IO commands
+            socketio_build_url,
+            // MQTT commands
+            mqtt_connect,
+            mqtt_subscribe,
+            mqtt_publish,
+            mqtt_disconnect,
             // Plugin commands
             list_plugins,
             toggle_plugin,

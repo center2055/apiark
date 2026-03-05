@@ -302,7 +302,7 @@ export interface AppSettings {
 
 // ── Tab Protocol ──
 
-export type TabProtocol = "http" | "graphql" | "websocket" | "sse" | "grpc";
+export type TabProtocol = "http" | "graphql" | "websocket" | "sse" | "grpc" | "mqtt" | "socketio";
 
 export interface GraphQLState {
   query: string;
