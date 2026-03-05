@@ -44,15 +44,16 @@ export function ConsoleBottomBar() {
     return (
       <button
         onClick={toggle}
-        className="flex items-center gap-1.5 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+        className="flex items-center gap-2 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-elevated)] hover:text-[var(--color-text-primary)]"
       >
-        <Terminal className="h-3 w-3" />
+        <Terminal className="h-3.5 w-3.5" />
         Console
         {entries.length > 0 && (
-          <span className="ml-1 rounded-full bg-[var(--color-elevated)] px-1.5 text-[10px]">
+          <span className="rounded-full bg-[var(--color-accent)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--color-accent)]">
             {entries.length}
           </span>
         )}
+        <ChevronDown className="ml-auto h-3 w-3 rotate-180 text-[var(--color-text-dimmed)]" />
       </button>
     );
   }

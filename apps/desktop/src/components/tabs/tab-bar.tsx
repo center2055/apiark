@@ -122,23 +122,26 @@ function SortableTab({
         {...listeners}
         onClick={onActivate}
         onContextMenu={handleContextMenu}
-        className={`group flex shrink-0 items-center gap-1.5 border-r border-[var(--color-border)] px-3 py-1.5 text-sm transition-colors ${
+        className={`group relative flex shrink-0 items-center gap-2 px-4 py-2 text-sm transition-all ${
           isActive
             ? "bg-[var(--color-surface)] text-[var(--color-text-primary)]"
-            : "bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text-secondary)]"
+            : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface)]/50 hover:text-[var(--color-text-secondary)]"
         }`}
       >
+        {isActive && (
+          <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--color-accent)]" />
+        )}
         <TabBadge tab={tab} />
-        <span className="max-w-[120px] truncate">{tab.name}</span>
+        <span className="max-w-[140px] truncate">{tab.name}</span>
         {tab.isDirty && (
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-text-muted)]" />
+          <span className="h-2 w-2 rounded-full bg-orange-400/80" />
         )}
         <span
           onClick={(e) => {
             e.stopPropagation();
             onClose();
           }}
-          className="ml-1 rounded p-0.5 opacity-0 hover:bg-[var(--color-border)] group-hover:opacity-100"
+          className="ml-0.5 rounded p-0.5 opacity-0 transition-opacity hover:bg-[var(--color-border)] group-hover:opacity-100"
         >
           <X className="h-3 w-3" />
         </span>
@@ -205,13 +208,13 @@ function NewTabDropdown() {
   ];
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative flex items-center">
       <button
         onClick={() => setOpen(!open)}
-        className="flex shrink-0 items-center gap-0.5 p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+        className="mx-2 flex shrink-0 items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/50 hover:bg-[var(--color-accent)]/10 hover:text-[var(--color-accent)]"
         title="New Tab"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-3.5 w-3.5" />
         <ChevronDown className="h-2.5 w-2.5" />
       </button>
       {open && (
@@ -257,7 +260,7 @@ export function TabBar() {
   if (tabs.length === 0) return null;
 
   return (
-    <div data-tour="tabs" className="flex items-center border-b border-[var(--color-border)] bg-[var(--color-bg)]">
+    <div data-tour="tabs" className="flex items-center border-b border-[var(--color-border)] bg-[var(--color-bg)]/80">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
