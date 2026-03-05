@@ -420,7 +420,7 @@ No tool currently delivers ALL of these simultaneously:
 
 - [x] AI assistant (natural language -> requests, auto-test generation)
 - [x] MCP server for AI editor integration
-- [ ] VS Code extension, JetBrains plugin
+- [x] VS Code extension, JetBrains plugin
 - [x] GitHub Action, GitLab CI template
 - [ ] Plugin marketplace, auto-updater
 
