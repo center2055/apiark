@@ -612,7 +612,7 @@ const SHORTCUTS = [
   { keys: "Ctrl+,", desc: "Settings" },
   { keys: "Ctrl+\\", desc: "Toggle sidebar" },
   { keys: "Ctrl+.", desc: "Toggle Zen mode" },
-  { keys: "Ctrl+`", desc: "Toggle console" },
+  { keys: "Ctrl+`", desc: "Toggle terminal" },
   { keys: "Ctrl+Z", desc: "Undo" },
   { keys: "Ctrl+Shift+Z", desc: "Redo" },
   { keys: "Ctrl+Shift+N", desc: "New window" },

@@ -15,6 +15,7 @@ import {
 import { useTabStore } from "@/stores/tab-store";
 import { useCollectionStore } from "@/stores/collection-store";
 import { useEnvironmentStore } from "@/stores/environment-store";
+import { useConsoleStore } from "@/stores/console-store";
 import { useDiffStore } from "@/stores/diff-store";
 import { useMockStore } from "@/stores/mock-store";
 import { useMonitorStore } from "@/stores/monitor-store";
@@ -179,6 +180,27 @@ export function CommandPalette({
         action: () => { onToggleZen(); onOpenChange(false); },
       });
     }
+
+    cmds.push({
+      id: "toggle-terminal",
+      label: "Toggle Terminal",
+      category: "View",
+      action: () => {
+        // Dispatch custom event that App.tsx listens for
+        window.dispatchEvent(new CustomEvent("apiark:toggle-terminal"));
+        onOpenChange(false);
+      },
+    });
+
+    cmds.push({
+      id: "toggle-console",
+      label: "Toggle Console",
+      category: "View",
+      action: () => {
+        useConsoleStore.getState().toggle();
+        onOpenChange(false);
+      },
+    });
 
     // Pin/Duplicate active tab
     const activeTabId = useTabStore.getState().activeTabId;

@@ -31,7 +31,7 @@ import { useMockStore } from "@/stores/mock-store";
 import { useMonitorStore } from "@/stores/monitor-store";
 import { WelcomeScreen } from "@/components/onboarding/welcome-screen";
 import { GuidedTour } from "@/components/onboarding/guided-tour";
-import { ConsoleBottomBar } from "@/components/console/console-panel";
+import { BottomPanel } from "@/components/layout/bottom-panel";
 import { useCollectionStore } from "@/stores/collection-store";
 import { AiAssistantDialog } from "@/components/ai/ai-assistant-dialog";
 import { AlertCircle, X, RefreshCw, FileX, GitMerge, Shield, ArrowRightLeft } from "lucide-react";
@@ -61,6 +61,7 @@ function App() {
   const [activeView, setActiveView] = useState<ActivityView>("collections");
   const [sidePanelVisible, setSidePanelVisible] = useState(true);
   const [zenMode, setZenMode] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
   const urlBarRef = useRef<HTMLInputElement>(null);
   const envSelectorRef = useRef<HTMLSelectElement>(null);
   const { isCompact } = useResponsive();
@@ -140,10 +141,10 @@ function App() {
       const mod = e.ctrlKey || e.metaKey;
       if (!mod) return;
 
-      // Ctrl+` to toggle console (no mod key conflict)
+      // Ctrl+` to toggle terminal
       if (e.key === "`" && mod) {
         e.preventDefault();
-        useConsoleStore.getState().toggle();
+        setTerminalOpen((p) => !p);
         return;
       }
 
@@ -227,6 +228,13 @@ function App() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [newTab, closeTab, save, send, undoTab, redoTab, activeTab, zenMode]);
+
+  // Listen for terminal toggle from command palette
+  useEffect(() => {
+    const handler = () => setTerminalOpen((p) => !p);
+    window.addEventListener("apiark:toggle-terminal", handler);
+    return () => window.removeEventListener("apiark:toggle-terminal", handler);
+  }, []);
 
   // Refresh history when a request completes
   useEffect(() => {
@@ -323,11 +331,21 @@ function App() {
         </main>
       </div>
 
-      {/* Console (expandable) */}
-      {!zenMode && <ConsoleBottomBar />}
+      {/* Bottom panel (Console + Terminal) */}
+      {!zenMode && (
+        <BottomPanel
+          terminalOpen={terminalOpen}
+          onTerminalOpenChange={setTerminalOpen}
+        />
+      )}
 
       {/* Status bar */}
-      {!zenMode && <StatusBar />}
+      {!zenMode && (
+        <StatusBar
+          terminalOpen={terminalOpen}
+          onToggleTerminal={() => setTerminalOpen((p) => !p)}
+        />
+      )}
 
       {/* Zen mode indicator */}
       {zenMode && (

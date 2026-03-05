@@ -4,10 +4,15 @@ import { useMockStore } from "@/stores/mock-store";
 import { useMonitorStore } from "@/stores/monitor-store";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useConsoleStore } from "@/stores/console-store";
-import { Globe, FolderOpen, Server, Activity, Columns2, Rows2, Terminal } from "lucide-react";
+import { Globe, FolderOpen, Server, Activity, Columns2, Rows2, Terminal, ScrollText } from "lucide-react";
 import type { AppSettings } from "@apiark/types";
 
-export function StatusBar() {
+interface StatusBarProps {
+  onToggleTerminal?: () => void;
+  terminalOpen?: boolean;
+}
+
+export function StatusBar({ onToggleTerminal, terminalOpen }: StatusBarProps) {
   const activeEnv = useEnvironmentStore((s) => s.activeEnvironmentName);
   const collections = useCollectionStore((s) => s.collections);
   const mockServers = useMockStore((s) => s.servers);
@@ -31,31 +36,24 @@ export function StatusBar() {
     <div className="flex h-6 shrink-0 items-center border-t border-[var(--color-border)] bg-[var(--color-activity-bar)] px-2 text-[11px]">
       {/* Left side */}
       <div className="flex items-center gap-3">
-        {/* Environment */}
         {activeEnv && (
           <span className="flex items-center gap-1 text-[var(--color-text-muted)]">
             <Globe className="h-3 w-3" />
             {activeEnv}
           </span>
         )}
-
-        {/* Collection count */}
         {collections.length > 0 && (
           <span className="flex items-center gap-1 text-[var(--color-text-muted)]">
             <FolderOpen className="h-3 w-3" />
             {collections.length} collection{collections.length !== 1 ? "s" : ""}
           </span>
         )}
-
-        {/* Mock servers */}
         {runningMocks > 0 && (
           <span className="flex items-center gap-1 text-[var(--color-success)]">
             <Server className="h-3 w-3" />
             {runningMocks} mock{runningMocks !== 1 ? "s" : ""}
           </span>
         )}
-
-        {/* Monitors */}
         {activeMonitors > 0 && (
           <span className="flex items-center gap-1 text-[var(--color-success)]">
             <Activity className="h-3 w-3" />
@@ -76,17 +74,30 @@ export function StatusBar() {
               ? "bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
               : "text-[var(--color-text-dimmed)] hover:text-[var(--color-text-secondary)]"
           }`}
-          title="Toggle Console (Ctrl+`)"
+          title="Toggle Console"
         >
-          <Terminal className="h-3 w-3" />
+          <ScrollText className="h-3 w-3" />
           {consoleEntries.length > 0 && (
-            <span className={`text-[10px] font-bold ${
-              hasErrors ? "text-[var(--color-error)]" : ""
-            }`}>
+            <span className={`text-[10px] font-bold ${hasErrors ? "text-[var(--color-error)]" : ""}`}>
               {consoleEntries.length}
             </span>
           )}
         </button>
+
+        {/* Terminal toggle */}
+        {onToggleTerminal && (
+          <button
+            onClick={onToggleTerminal}
+            className={`flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors ${
+              terminalOpen
+                ? "bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+                : "text-[var(--color-text-dimmed)] hover:text-[var(--color-text-secondary)]"
+            }`}
+            title="Toggle Terminal (Ctrl+`)"
+          >
+            <Terminal className="h-3 w-3" />
+          </button>
+        )}
 
         {/* Layout toggle */}
         <button

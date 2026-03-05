@@ -59,6 +59,7 @@ use commands::mqtt::{mqtt_connect, mqtt_subscribe, mqtt_publish, mqtt_disconnect
 use commands::socketio::socketio_build_url;
 use plugins::manager::PluginManager;
 use commands::proxy::{proxy_start, proxy_stop, proxy_status, proxy_get_captures, proxy_clear_captures, proxy_set_passthrough, proxy_generate_ca, proxy_get_ca_cert, proxy_ca_exists};
+use commands::terminal::{terminal_create, terminal_write, terminal_resize, terminal_close, TerminalManager};
 use proxy::capture::ProxyCaptureManager;
 use mqtt::client::MqttManager;
 use oauth::OAuthTokenStore;
@@ -169,6 +170,7 @@ pub fn run() {
         .manage(PluginManager::new(&apiark_dir))
         .manage(MqttManager::new())
         .manage(ProxyCaptureManager::new())
+        .manage(TerminalManager::new())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
@@ -294,6 +296,11 @@ pub fn run() {
             // AI commands
             ai_generate_request,
             ai_generate_tests,
+            // Terminal commands
+            terminal_create,
+            terminal_write,
+            terminal_resize,
+            terminal_close,
             // Updater/rollback commands
             list_rollback_versions,
             backup_current_binary,

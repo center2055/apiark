@@ -25,6 +25,7 @@ pub mod state;
 pub mod trash;
 pub mod watcher;
 pub mod websocket;
+pub mod terminal;
 pub mod updater;
 pub mod window;
 
