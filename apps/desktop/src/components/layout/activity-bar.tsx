@@ -3,7 +3,7 @@ import {
   Globe,
   Clock,
   Settings,
-  Sparkles,
+  MessageSquare,
   Terminal,
   Server,
   FileText,
@@ -79,7 +79,7 @@ export function ActivityBar({
 
       {/* Bottom actions */}
       <div className="flex flex-col items-center gap-1">
-        <ActivityBarButton icon={Sparkles} label="AI Assistant (Ctrl+Shift+A)" onClick={onOpenAi} />
+        <ActivityBarButton icon={MessageSquare} label="AI Assistant (Ctrl+Shift+A)" onClick={onOpenAi} />
         <ActivityBarButton icon={Terminal} label="Console (Ctrl+`)" onClick={onToggleConsole} />
         <ActivityBarButton icon={Settings} label="Settings (Ctrl+,)" onClick={onOpenSettings} />
       </div>
