@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { previewDocs, generateDocs } from "@/lib/tauri-api";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
@@ -20,7 +20,6 @@ export function DocsPreviewDialog({
   const [html, setHtml] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     if (open && collectionPath) {
@@ -32,17 +31,6 @@ export function DocsPreviewDialog({
         .finally(() => setLoading(false));
     }
   }, [open, collectionPath]);
-
-  useEffect(() => {
-    if (html && iframeRef.current) {
-      const doc = iframeRef.current.contentDocument;
-      if (doc) {
-        doc.open();
-        doc.write(html);
-        doc.close();
-      }
-    }
-  }, [html]);
 
   const handleExport = async (format: "html" | "markdown") => {
     try {
@@ -109,7 +97,7 @@ export function DocsPreviewDialog({
             </div>
           ) : (
             <iframe
-              ref={iframeRef}
+              srcDoc={html}
               className="h-full w-full border-none"
               sandbox="allow-same-origin"
               title="API Documentation Preview"

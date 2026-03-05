@@ -309,11 +309,14 @@ function App() {
             onOpenMock={() => useMockStore.getState().openDialog()}
             onOpenMonitor={() => useMonitorStore.getState().openDialog()}
             onOpenDocs={() => {
-              // Open docs for first collection if available
               const collections = useCollectionStore.getState().collections;
-              if (collections.length > 0) {
-                useDocsStore.getState().openDocs(collections[0].path, collections[0].name);
+              if (collections.length === 0) {
+                import("@/stores/toast-store").then(({ useToastStore }) =>
+                  useToastStore.getState().showError("Open a collection first to generate documentation."),
+                );
+                return;
               }
+              useDocsStore.getState().openDocs(collections[0].path, collections[0].name);
             }}
           />
         )}

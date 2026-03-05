@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ipc: tauri: https://releases.apiark.dev https://api.apiark.dev; font-src 'self' data:"
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ipc: tauri: https://releases.apiark.dev https://api.apiark.dev; font-src 'self' data:; frame-src 'self' blob: data:"
     }
   },
   "plugins": {
