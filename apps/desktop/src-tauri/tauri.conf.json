@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ipc: tauri: https://releases.apiark.dev https://api.apiark.dev; font-src 'self' data:; frame-src 'self' blob: data:"
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ipc: tauri: https://github.com https://api.github.com https://releases.apiark.dev https://api.apiark.dev; font-src 'self' data:; frame-src 'self' blob: data:"
     }
   },
   "plugins": {
@@ -32,9 +32,9 @@
     },
     "updater": {
       "endpoints": [
-        "https://releases.apiark.dev/{{target}}/{{arch}}/{{current_version}}"
+        "https://github.com/berbicanes/apiark/releases/latest/download/latest.json"
       ],
-      "pubkey": ""
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEMxMURCQzg3Q0RBMTU3OEUKUldTT1Y2SE5oN3dkd1dnSHRVMWNqV0d6VWJiU0tkU3VVaFZpNGowdHFOUkRmL2s3b1Uxd2FTcWoK"
     }
   },
   "bundle": {

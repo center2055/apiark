@@ -359,7 +359,9 @@ function UpdateSection({
   update: (patch: Partial<AppSettings>) => void;
 }) {
   const [checking, setChecking] = useState(false);
+  const [installing, setInstalling] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
+  const [pendingUpdate, setPendingUpdate] = useState<Awaited<ReturnType<typeof import("@tauri-apps/plugin-updater").check>> | null>(null);
   const [backups, setBackups] = useState<string[]>([]);
 
   const loadBackups = async () => {
@@ -372,23 +374,47 @@ function UpdateSection({
   const checkForUpdates = async () => {
     setChecking(true);
     setUpdateStatus(null);
+    setPendingUpdate(null);
     try {
-      // Backup current binary before checking for updates
-      const { backupCurrentBinary } = await import("@/lib/tauri-api");
-      await backupCurrentBinary().catch(() => {});
-
       const { check } = await import("@tauri-apps/plugin-updater");
       const result = await check();
       if (result) {
+        setPendingUpdate(result);
         setUpdateStatus(`Update available: v${result.version}`);
       } else {
-        setUpdateStatus("You're up to date");
+        setUpdateStatus("You're up to date!");
       }
       loadBackups();
     } catch (e) {
       setUpdateStatus(`Check failed: ${e}`);
     } finally {
       setChecking(false);
+    }
+  };
+
+  const installUpdate = async () => {
+    if (!pendingUpdate) return;
+    setInstalling(true);
+    setUpdateStatus("Backing up current version...");
+    try {
+      const { backupCurrentBinary } = await import("@/lib/tauri-api");
+      await backupCurrentBinary().catch(() => {});
+
+      setUpdateStatus("Downloading update...");
+      await pendingUpdate.downloadAndInstall((progress) => {
+        if (progress.event === "Started" && progress.data.contentLength) {
+          setUpdateStatus(`Downloading... (${(progress.data.contentLength / 1024 / 1024).toFixed(1)} MB)`);
+        } else if (progress.event === "Finished") {
+          setUpdateStatus("Download complete. Restart to apply.");
+        }
+      });
+      setUpdateStatus("Update installed! Restart the app to apply.");
+      setPendingUpdate(null);
+      loadBackups();
+    } catch (e) {
+      setUpdateStatus(`Update failed: ${e}`);
+    } finally {
+      setInstalling(false);
     }
   };
 
@@ -422,15 +448,26 @@ function UpdateSection({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={checkForUpdates}
-          disabled={checking}
+          disabled={checking || installing}
           className="flex items-center gap-1.5 rounded bg-[var(--color-elevated)] px-3 py-1.5 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-text-primary)] disabled:opacity-50"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${checking ? "animate-spin" : ""}`} />
           {checking ? "Checking..." : "Check for Updates"}
         </button>
+
+        {pendingUpdate && !installing && (
+          <button
+            onClick={installUpdate}
+            className="flex items-center gap-1.5 rounded bg-[var(--color-accent)] px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Install v{pendingUpdate.version}
+          </button>
+        )}
+
         {updateStatus && (
           <span className="text-xs text-[var(--color-text-muted)]">{updateStatus}</span>
         )}
