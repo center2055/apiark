@@ -145,44 +145,40 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
+            const { execSync } = require('child_process');
             const target = '${{ matrix.target }}';
             const bundleDir = `apps/desktop/src-tauri/target/${target}/release/bundle`;
             const archSuffix = target.includes('aarch64') ? '_aarch64' : '_x64';
+            const isWindows = process.platform === 'win32';
 
-            // Log the full bundle directory contents for debugging
-            console.log('Bundle dir:', bundleDir);
-            console.log('Bundle dir exists:', fs.existsSync(bundleDir));
-            if (fs.existsSync(bundleDir)) {
-              const topLevel = fs.readdirSync(bundleDir, { withFileTypes: true });
-              console.log('Bundle subdirs:', topLevel.map(e => `${e.name} (${e.isDirectory() ? 'dir' : 'file'})`));
+            // Use OS find command to reliably discover all files
+            let allFiles;
+            try {
+              if (isWindows) {
+                const raw = execSync(`dir /s /b "${bundleDir}"`, { encoding: 'utf-8' });
+                allFiles = raw.trim().split('\r\n').filter(Boolean);
+              } else {
+                const raw = execSync(`find "${bundleDir}" -type f`, { encoding: 'utf-8' });
+                allFiles = raw.trim().split('\n').filter(Boolean);
+              }
+            } catch (e) {
+              console.log('Failed to list bundle dir:', e.message);
+              allFiles = [];
             }
 
-            // Search known bundle subdirectories AND the bundle dir itself
-            const searchDirs = ['appimage', 'deb', 'rpm', 'nsis', 'msi', 'macos', 'dmg'];
-            const updaterFiles = [];
+            // Filter to updater-relevant files
+            const updaterFiles = allFiles.filter(f => {
+              const name = path.basename(f);
+              if (name.startsWith('api-ark')) return false;
+              if (name.endsWith('.sig')) return true;
+              if (name.endsWith('.AppImage.tar.gz')) return true;
+              if (name.endsWith('.app.tar.gz')) return true;
+              if (name.endsWith('.nsis.zip')) return true;
+              if (name.endsWith('.msi.zip')) return true;
+              return false;
+            });
 
-            for (const sub of searchDirs) {
-              const dir = path.join(bundleDir, sub);
-              if (!fs.existsSync(dir)) {
-                console.log(`  ${sub}/: does not exist`);
-                continue;
-              }
-              const entries = fs.readdirSync(dir, { withFileTypes: true });
-              const files = entries.filter(e => !e.isDirectory()).map(e => e.name);
-              console.log(`  ${sub}/: ${files.length} files:`, files);
-
-              for (const name of files) {
-                if (name.startsWith('api-ark')) continue;
-                if (name.endsWith('.sig') ||
-                    name.endsWith('.AppImage.tar.gz') ||
-                    name.endsWith('.app.tar.gz') ||
-                    name.endsWith('.nsis.zip') ||
-                    name.endsWith('.msi.zip')) {
-                  updaterFiles.push(path.join(dir, name));
-                }
-              }
-            }
-
+            console.log('All files found:', allFiles.length);
             console.log('Updater files to upload:', updaterFiles.map(f => path.basename(f)));
 
             for (const file of updaterFiles) {
