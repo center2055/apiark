@@ -149,20 +149,30 @@ jobs:
             const bundleDir = `apps/desktop/src-tauri/target/${target}/release/bundle`;
             const archSuffix = target.includes('aarch64') ? '_aarch64' : '_x64';
 
-            // Search only known bundle subdirectories (not recursive into AppImage contents)
+            // Log the full bundle directory contents for debugging
+            console.log('Bundle dir:', bundleDir);
+            console.log('Bundle dir exists:', fs.existsSync(bundleDir));
+            if (fs.existsSync(bundleDir)) {
+              const topLevel = fs.readdirSync(bundleDir, { withFileTypes: true });
+              console.log('Bundle subdirs:', topLevel.map(e => `${e.name} (${e.isDirectory() ? 'dir' : 'file'})`));
+            }
+
+            // Search known bundle subdirectories AND the bundle dir itself
             const searchDirs = ['appimage', 'deb', 'rpm', 'nsis', 'msi', 'macos', 'dmg'];
             const updaterFiles = [];
 
             for (const sub of searchDirs) {
               const dir = path.join(bundleDir, sub);
-              if (!fs.existsSync(dir)) continue;
-              // Only read top-level files in each bundle subdirectory (no recursion)
-              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-                if (entry.isDirectory()) continue;
-                const name = entry.name;
-                // Skip api-ark duplicates, only want ApiArk variants
+              if (!fs.existsSync(dir)) {
+                console.log(`  ${sub}/: does not exist`);
+                continue;
+              }
+              const entries = fs.readdirSync(dir, { withFileTypes: true });
+              const files = entries.filter(e => !e.isDirectory()).map(e => e.name);
+              console.log(`  ${sub}/: ${files.length} files:`, files);
+
+              for (const name of files) {
                 if (name.startsWith('api-ark')) continue;
-                // Match updater-relevant files
                 if (name.endsWith('.sig') ||
                     name.endsWith('.AppImage.tar.gz') ||
                     name.endsWith('.app.tar.gz') ||
