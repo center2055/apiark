@@ -1,0 +1,297 @@
+{
+  "app": {
+    "name": "ApiArk"
+  },
+  "sidebar": {
+    "collections": "المجموعات",
+    "history": "السجل",
+    "environments": "البيئات",
+    "search": "البحث في المجموعات...",
+    "noCollections": "افتح مجلداً أو استورد مجموعة للبدء",
+    "openFolder": "فتح مجلد",
+    "importCollection": "استيراد مجموعة",
+    "newRequest": "طلب جديد",
+    "newFolder": "مجلد جديد",
+    "cookieSettings": "إعدادات الكوكيز",
+    "rename": "إعادة تسمية",
+    "duplicate": "تكرار",
+    "delete": "حذف",
+    "noResults": "لا توجد طلبات مطابقة"
+  },
+  "tabs": {
+    "untitled": "طلب بدون عنوان",
+    "close": "إغلاق",
+    "closeOthers": "إغلاق الأخرى",
+    "closeAll": "إغلاق الكل",
+    "noTabs": "افتح طلباً من الشريط الجانبي، أو اضغط {{shortcut}} لإنشاء واحد"
+  },
+  "request": {
+    "send": "إرسال",
+    "sending": "جارٍ الإرسال...",
+    "cancel": "إلغاء",
+    "urlPlaceholder": "أدخل URL أو الصق cURL",
+    "params": "المعاملات",
+    "headers": "الترويسات",
+    "body": "المحتوى",
+    "auth": "المصادقة",
+    "scripts": "البرامج النصية",
+    "preRequest": "قبل الطلب",
+    "postResponse": "بعد الاستجابة",
+    "tests": "الاختبارات",
+    "assertions": "التأكيدات",
+    "key": "المفتاح",
+    "value": "القيمة",
+    "description": "الوصف",
+    "enabled": "مفعّل",
+    "addRow": "إضافة",
+    "bulkEdit": "تحرير جماعي",
+    "pathVariables": "متغيرات المسار"
+  },
+  "body": {
+    "json": "JSON",
+    "xml": "XML",
+    "formData": "Form Data",
+    "urlencoded": "URL Encoded",
+    "raw": "خام",
+    "binary": "ثنائي",
+    "none": "بدون"
+  },
+  "auth": {
+    "type": "نوع المصادقة",
+    "none": "بدون مصادقة",
+    "bearer": "Bearer Token",
+    "basic": "Basic Auth",
+    "apiKey": "API Key",
+    "oauth2": "OAuth 2.0",
+    "digest": "Digest Auth",
+    "awsV4": "AWS Signature v4",
+    "ntlm": "NTLM",
+    "jwtBearer": "JWT Bearer",
+    "token": "الرمز المميز",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "inherited": "موروث من {{source}}"
+  },
+  "response": {
+    "body": "المحتوى",
+    "headers": "الترويسات",
+    "cookies": "الكوكيز",
+    "tests": "الاختبارات",
+    "timing": "التوقيت",
+    "pretty": "منسّق",
+    "raw": "خام",
+    "preview": "معاينة",
+    "noResponse": "أرسل طلباً لرؤية الاستجابة",
+    "copyResponse": "نسخ الاستجابة",
+    "saveToFile": "حفظ في ملف",
+    "loadFullResponse": "تحميل الاستجابة الكاملة",
+    "truncated": "تم اقتطاع الاستجابة ({{size}}). يتم عرض أول 1 ميجابايت.",
+    "status": {
+      "success": "نجاح",
+      "redirect": "إعادة توجيه",
+      "clientError": "خطأ العميل",
+      "serverError": "خطأ الخادم"
+    }
+  },
+  "environment": {
+    "title": "البيئات",
+    "noEnvironment": "بدون بيئة",
+    "create": "إنشاء بيئة",
+    "edit": "تحرير البيئة",
+    "name": "الاسم",
+    "variables": "المتغيرات",
+    "secrets": "الأسرار",
+    "noEnvironments": "أنشئ بيئة لإدارة المتغيرات عبر الطلبات",
+    "variableHint": "استخدم {{syntax}} للقيم الديناميكية"
+  },
+  "history": {
+    "title": "السجل",
+    "search": "البحث في السجل...",
+    "clear": "مسح السجل",
+    "clearConfirm": "هل أنت متأكد أنك تريد مسح كل السجل؟",
+    "noHistory": "أرسل طلبك الأول لرؤيته هنا",
+    "restore": "استعادة"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "general": "عام",
+    "theme": "المظهر",
+    "dark": "داكن",
+    "light": "فاتح",
+    "system": "النظام",
+    "sidebarWidth": "عرض الشريط الجانبي",
+    "network": "الشبكة",
+    "sslVerification": "التحقق من شهادة SSL",
+    "followRedirects": "اتباع إعادة التوجيه",
+    "timeout": "مهلة الطلب (مللي ثانية)",
+    "proxyUrl": "عنوان البروكسي",
+    "proxyUsername": "اسم المستخدم (اختياري)",
+    "proxyPassword": "كلمة المرور (اختياري)",
+    "certificates": "الشهادات",
+    "caCert": "شهادة CA مخصصة (PEM)",
+    "clientCert": "شهادة العميل (PEM)",
+    "clientKey": "مفتاح العميل (PEM)",
+    "pfxPassphrase": "عبارة مرور PFX",
+    "backup": "النسخ الاحتياطي",
+    "includeHistory": "تضمين السجل في التصدير",
+    "exportState": "تصدير الحالة",
+    "importState": "استيراد الحالة",
+    "exporting": "جارٍ التصدير...",
+    "importing": "جارٍ الاستيراد...",
+    "updates": "التحديثات",
+    "updateChannel": "قناة التحديث",
+    "stable": "مستقر",
+    "beta": "بيتا",
+    "nightly": "Nightly",
+    "checkForUpdates": "التحقق من التحديثات",
+    "upToDate": "أنت على أحدث إصدار",
+    "updateAvailable": "تحديث متاح: {{version}}"
+  },
+  "runner": {
+    "title": "مشغّل المجموعة",
+    "run": "تشغيل",
+    "stop": "إيقاف",
+    "iterations": "التكرارات",
+    "delay": "التأخير (مللي ثانية)",
+    "dataFile": "ملف البيانات",
+    "results": "النتائج",
+    "passed": "ناجح",
+    "failed": "فاشل",
+    "skipped": "تم تخطيه",
+    "duration": "المدة"
+  },
+  "import": {
+    "title": "استيراد مجموعة",
+    "selectFile": "اختيار ملف",
+    "format": "التنسيق",
+    "autoDetect": "اكتشاف تلقائي",
+    "preview": "معاينة",
+    "importing": "جارٍ الاستيراد...",
+    "success": "تم الاستيراد بنجاح",
+    "requestCount": "{{count}} طلبات",
+    "folderCount": "{{count}} مجلدات",
+    "warnings": "{{count}} تحذيرات"
+  },
+  "export": {
+    "title": "تصدير المجموعة",
+    "format": "التنسيق",
+    "postman": "Postman v2.1",
+    "openapi": "OpenAPI 3.0",
+    "apiark": "ApiArk YAML"
+  },
+  "commandPalette": {
+    "placeholder": "اكتب أمراً...",
+    "noResults": "لا توجد أوامر مطابقة"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "delete": "حذف",
+    "rename": "إعادة تسمية",
+    "create": "إنشاء",
+    "edit": "تحرير",
+    "copy": "نسخ",
+    "paste": "لصق",
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "success": "نجاح",
+    "warning": "تحذير",
+    "retry": "إعادة المحاولة",
+    "browse": "استعراض..."
+  },
+  "errors": {
+    "connectionRefused": "تم رفض الاتصال — هل الخادم قيد التشغيل؟",
+    "timeout": "انتهت مهلة الطلب",
+    "dnsFailure": "فشل تحليل DNS — تحقق من العنوان",
+    "tlsError": "خطأ TLS/SSL — تحقق من إعدادات الشهادة",
+    "networkError": "خطأ في الشبكة",
+    "autoSaveFailed": "فشل الحفظ التلقائي: {{reason}}",
+    "fileDeleted": "تم حذف هذا الملف",
+    "fileChanged": "تم تعديل هذا الملف خارجياً",
+    "mergeConflict": "يحتوي هذا الملف على تعارضات دمج. يرجى حلها في محررك أو أداة Git."
+  },
+  "onboarding": {
+    "welcome": "مرحباً بك في ApiArk",
+    "tagline": "تطوير API محلي أولاً. بدون حسابات. بدون سحابة. قوة كاملة.",
+    "startScratch": "البدء من الصفر",
+    "importExisting": "استيراد مجموعة موجودة",
+    "openFolder": "فتح مجلد",
+    "chooseTheme": "اختر المظهر"
+  },
+  "console": {
+    "title": "وحدة التحكم",
+    "clear": "مسح",
+    "filter": "تصفية",
+    "all": "الكل",
+    "noLogs": "لا يوجد إخراج في وحدة التحكم بعد"
+  },
+  "grpc": {
+    "title": "gRPC",
+    "loadProto": "تحميل .proto",
+    "service": "الخدمة",
+    "method": "الطريقة",
+    "invoke": "استدعاء",
+    "metadata": "البيانات الوصفية",
+    "requestBody": "الطلب",
+    "responseBody": "الاستجابة"
+  },
+  "mock": {
+    "title": "خوادم Mock",
+    "start": "بدء الخادم",
+    "stop": "إيقاف",
+    "port": "المنفذ",
+    "running": "قيد التشغيل",
+    "stopped": "متوقف"
+  },
+  "monitor": {
+    "title": "المراقبات",
+    "create": "إنشاء مراقبة",
+    "schedule": "الجدول",
+    "lastRun": "آخر تشغيل",
+    "nextRun": "التشغيل التالي",
+    "enabled": "مفعّل",
+    "disabled": "معطّل"
+  },
+  "docs": {
+    "title": "وثائق API",
+    "generate": "توليد",
+    "preview": "معاينة",
+    "html": "HTML",
+    "markdown": "Markdown"
+  },
+  "diff": {
+    "title": "مقارنة الاستجابة",
+    "snapshot": "لقطة",
+    "compare": "مقارنة"
+  },
+  "trash": {
+    "title": "سلة المحذوفات",
+    "restore": "استعادة",
+    "emptyTrash": "إفراغ سلة المحذوفات",
+    "deletedAt": "حُذف في {{date}}"
+  },
+  "migration": {
+    "title": "تحديث تنسيق المجموعة",
+    "message": "تستخدم هذه المجموعة التنسيق v{{old}}. الإصدار الحالي هو v{{new}}.",
+    "upgrade": "ترقية",
+    "readOnly": "فتح للقراءة فقط",
+    "upgradeHint": "ستعيد الترقية كتابة ملفات المجموعة. قم بعمل commit لتغييراتك أولاً."
+  },
+  "websocket": {
+    "connect": "اتصال",
+    "disconnect": "قطع الاتصال",
+    "send": "إرسال",
+    "connected": "متصل",
+    "disconnected": "غير متصل",
+    "messages": "الرسائل"
+  },
+  "sse": {
+    "connect": "اتصال",
+    "disconnect": "قطع الاتصال",
+    "events": "الأحداث",
+    "connected": "متصل",
+    "disconnected": "غير متصل"
+  }
+}

@@ -1,0 +1,297 @@
+{
+  "app": {
+    "name": "ApiArk"
+  },
+  "sidebar": {
+    "collections": "Coleções",
+    "history": "Histórico",
+    "environments": "Ambientes",
+    "search": "Buscar coleções...",
+    "noCollections": "Abra uma pasta ou importe uma coleção para começar",
+    "openFolder": "Abrir Pasta",
+    "importCollection": "Importar Coleção",
+    "newRequest": "Nova Requisição",
+    "newFolder": "Nova Pasta",
+    "cookieSettings": "Configurações de Cookies",
+    "rename": "Renomear",
+    "duplicate": "Duplicar",
+    "delete": "Excluir",
+    "noResults": "Nenhuma requisição encontrada"
+  },
+  "tabs": {
+    "untitled": "Requisição sem título",
+    "close": "Fechar",
+    "closeOthers": "Fechar outras",
+    "closeAll": "Fechar todas",
+    "noTabs": "Abra uma requisição pela barra lateral, ou pressione {{shortcut}} para criar uma"
+  },
+  "request": {
+    "send": "Enviar",
+    "sending": "Enviando...",
+    "cancel": "Cancelar",
+    "urlPlaceholder": "Digite a URL ou cole um cURL",
+    "params": "Parâmetros",
+    "headers": "Cabeçalhos",
+    "body": "Corpo",
+    "auth": "Autenticação",
+    "scripts": "Scripts",
+    "preRequest": "Pré-requisição",
+    "postResponse": "Pós-resposta",
+    "tests": "Testes",
+    "assertions": "Asserções",
+    "key": "Chave",
+    "value": "Valor",
+    "description": "Descrição",
+    "enabled": "Habilitado",
+    "addRow": "Adicionar",
+    "bulkEdit": "Edição em massa",
+    "pathVariables": "Variáveis de caminho"
+  },
+  "body": {
+    "json": "JSON",
+    "xml": "XML",
+    "formData": "Form Data",
+    "urlencoded": "URL Encoded",
+    "raw": "Bruto",
+    "binary": "Binário",
+    "none": "Nenhum"
+  },
+  "auth": {
+    "type": "Tipo de Autenticação",
+    "none": "Sem Autenticação",
+    "bearer": "Bearer Token",
+    "basic": "Basic Auth",
+    "apiKey": "API Key",
+    "oauth2": "OAuth 2.0",
+    "digest": "Digest Auth",
+    "awsV4": "AWS Signature v4",
+    "ntlm": "NTLM",
+    "jwtBearer": "JWT Bearer",
+    "token": "Token",
+    "username": "Usuário",
+    "password": "Senha",
+    "inherited": "Herdado de {{source}}"
+  },
+  "response": {
+    "body": "Corpo",
+    "headers": "Cabeçalhos",
+    "cookies": "Cookies",
+    "tests": "Testes",
+    "timing": "Tempos",
+    "pretty": "Formatado",
+    "raw": "Bruto",
+    "preview": "Pré-visualização",
+    "noResponse": "Envie uma requisição para ver a resposta",
+    "copyResponse": "Copiar Resposta",
+    "saveToFile": "Salvar em Arquivo",
+    "loadFullResponse": "Carregar Resposta Completa",
+    "truncated": "Resposta truncada ({{size}}). Mostrando primeiro 1 MB.",
+    "status": {
+      "success": "Sucesso",
+      "redirect": "Redirecionamento",
+      "clientError": "Erro do Cliente",
+      "serverError": "Erro do Servidor"
+    }
+  },
+  "environment": {
+    "title": "Ambientes",
+    "noEnvironment": "Sem Ambiente",
+    "create": "Criar Ambiente",
+    "edit": "Editar Ambiente",
+    "name": "Nome",
+    "variables": "Variáveis",
+    "secrets": "Segredos",
+    "noEnvironments": "Crie um ambiente para gerenciar variáveis entre requisições",
+    "variableHint": "Use {{syntax}} para valores dinâmicos"
+  },
+  "history": {
+    "title": "Histórico",
+    "search": "Buscar no histórico...",
+    "clear": "Limpar Histórico",
+    "clearConfirm": "Tem certeza de que deseja limpar todo o histórico?",
+    "noHistory": "Envie sua primeira requisição para vê-la aqui",
+    "restore": "Restaurar"
+  },
+  "settings": {
+    "title": "Configurações",
+    "general": "Geral",
+    "theme": "Tema",
+    "dark": "Escuro",
+    "light": "Claro",
+    "system": "Sistema",
+    "sidebarWidth": "Largura da barra lateral",
+    "network": "Rede",
+    "sslVerification": "Verificação de Certificado SSL",
+    "followRedirects": "Seguir Redirecionamentos",
+    "timeout": "Tempo limite (ms)",
+    "proxyUrl": "URL do Proxy",
+    "proxyUsername": "Usuário (opcional)",
+    "proxyPassword": "Senha (opcional)",
+    "certificates": "Certificados",
+    "caCert": "Certificado CA personalizado (PEM)",
+    "clientCert": "Certificado do Cliente (PEM)",
+    "clientKey": "Chave do Cliente (PEM)",
+    "pfxPassphrase": "Senha PFX",
+    "backup": "Backup",
+    "includeHistory": "Incluir histórico na exportação",
+    "exportState": "Exportar Estado",
+    "importState": "Importar Estado",
+    "exporting": "Exportando...",
+    "importing": "Importando...",
+    "updates": "Atualizações",
+    "updateChannel": "Canal de Atualização",
+    "stable": "Estável",
+    "beta": "Beta",
+    "nightly": "Nightly",
+    "checkForUpdates": "Verificar Atualizações",
+    "upToDate": "Você está atualizado",
+    "updateAvailable": "Atualização disponível: {{version}}"
+  },
+  "runner": {
+    "title": "Executor de Coleção",
+    "run": "Executar",
+    "stop": "Parar",
+    "iterations": "Iterações",
+    "delay": "Atraso (ms)",
+    "dataFile": "Arquivo de Dados",
+    "results": "Resultados",
+    "passed": "Aprovados",
+    "failed": "Falhos",
+    "skipped": "Ignorados",
+    "duration": "Duração"
+  },
+  "import": {
+    "title": "Importar Coleção",
+    "selectFile": "Selecionar Arquivo",
+    "format": "Formato",
+    "autoDetect": "Detectar automaticamente",
+    "preview": "Pré-visualização",
+    "importing": "Importando...",
+    "success": "Importação bem-sucedida",
+    "requestCount": "{{count}} requisições",
+    "folderCount": "{{count}} pastas",
+    "warnings": "{{count}} avisos"
+  },
+  "export": {
+    "title": "Exportar Coleção",
+    "format": "Formato",
+    "postman": "Postman v2.1",
+    "openapi": "OpenAPI 3.0",
+    "apiark": "ApiArk YAML"
+  },
+  "commandPalette": {
+    "placeholder": "Digite um comando...",
+    "noResults": "Nenhum comando encontrado"
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "delete": "Excluir",
+    "rename": "Renomear",
+    "create": "Criar",
+    "edit": "Editar",
+    "copy": "Copiar",
+    "paste": "Colar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso",
+    "retry": "Tentar novamente",
+    "browse": "Procurar..."
+  },
+  "errors": {
+    "connectionRefused": "Conexão recusada — o servidor está em execução?",
+    "timeout": "A requisição expirou",
+    "dnsFailure": "Resolução DNS falhou — verifique a URL",
+    "tlsError": "Erro TLS/SSL — verifique as configurações do certificado",
+    "networkError": "Erro de rede",
+    "autoSaveFailed": "Salvamento automático falhou: {{reason}}",
+    "fileDeleted": "Este arquivo foi excluído",
+    "fileChanged": "Este arquivo foi alterado externamente",
+    "mergeConflict": "Este arquivo tem conflitos de merge. Resolva-os no seu editor ou ferramenta Git."
+  },
+  "onboarding": {
+    "welcome": "Bem-vindo ao ApiArk",
+    "tagline": "Desenvolvimento de API local-first. Sem contas. Sem nuvem. Poder total.",
+    "startScratch": "Começar do zero",
+    "importExisting": "Importar coleção existente",
+    "openFolder": "Abrir uma pasta",
+    "chooseTheme": "Escolha seu tema"
+  },
+  "console": {
+    "title": "Console",
+    "clear": "Limpar",
+    "filter": "Filtrar",
+    "all": "Todos",
+    "noLogs": "Sem saída do console ainda"
+  },
+  "grpc": {
+    "title": "gRPC",
+    "loadProto": "Carregar .proto",
+    "service": "Serviço",
+    "method": "Método",
+    "invoke": "Invocar",
+    "metadata": "Metadados",
+    "requestBody": "Requisição",
+    "responseBody": "Resposta"
+  },
+  "mock": {
+    "title": "Servidores Mock",
+    "start": "Iniciar Servidor",
+    "stop": "Parar",
+    "port": "Porta",
+    "running": "Em execução",
+    "stopped": "Parado"
+  },
+  "monitor": {
+    "title": "Monitores",
+    "create": "Criar Monitor",
+    "schedule": "Agendamento",
+    "lastRun": "Última Execução",
+    "nextRun": "Próxima Execução",
+    "enabled": "Habilitado",
+    "disabled": "Desabilitado"
+  },
+  "docs": {
+    "title": "Documentação API",
+    "generate": "Gerar",
+    "preview": "Pré-visualização",
+    "html": "HTML",
+    "markdown": "Markdown"
+  },
+  "diff": {
+    "title": "Diff de Resposta",
+    "snapshot": "Snapshot",
+    "compare": "Comparar"
+  },
+  "trash": {
+    "title": "Lixeira",
+    "restore": "Restaurar",
+    "emptyTrash": "Esvaziar Lixeira",
+    "deletedAt": "Excluído em {{date}}"
+  },
+  "migration": {
+    "title": "Atualização de Formato da Coleção",
+    "message": "Esta coleção usa o formato v{{old}}. A versão atual é v{{new}}.",
+    "upgrade": "Atualizar",
+    "readOnly": "Abrir Somente Leitura",
+    "upgradeHint": "A atualização reescreverá os arquivos da coleção. Faça commit das suas alterações primeiro."
+  },
+  "websocket": {
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "send": "Enviar",
+    "connected": "Conectado",
+    "disconnected": "Desconectado",
+    "messages": "Mensagens"
+  },
+  "sse": {
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "events": "Eventos",
+    "connected": "Conectado",
+    "disconnected": "Desconectado"
+  }
+}

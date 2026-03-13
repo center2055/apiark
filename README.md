@@ -34,21 +34,62 @@
 </p>
 
 <p align="center">
-  <a href="#translations">English</a> &bull;
-  <a href="#translations">Espa&#241;ol</a> &bull;
-  <a href="#translations">Fran&#231;ais</a> &bull;
-  <a href="#translations">Deutsch</a> &bull;
-  <a href="#translations">Portugu&#234;s</a> &bull;
-  <a href="#translations">&#20013;&#25991;</a> &bull;
-  <a href="#translations">&#26085;&#26412;&#35486;</a> &bull;
-  <a href="#translations">&#54620;&#44397;&#50612;</a> &bull;
-  <a href="#translations">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</a>
+  <a href="README.md">English</a> &bull;
+  <a href="docs/readme/README_es.md">Espa&#241;ol</a> &bull;
+  <a href="docs/readme/README_fr.md">Fran&#231;ais</a> &bull;
+  <a href="docs/readme/README_de.md">Deutsch</a> &bull;
+  <a href="docs/readme/README_pt.md">Portugu&#234;s</a> &bull;
+  <a href="docs/readme/README_zh.md">&#20013;&#25991;</a> &bull;
+  <a href="docs/readme/README_ja.md">&#26085;&#26412;&#35486;</a> &bull;
+  <a href="docs/readme/README_ko.md">&#54620;&#44397;&#50612;</a> &bull;
+  <a href="docs/readme/README_ar.md">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</a>
 </p>
 
 ---
 
-<!-- TODO: Add hero screenshot/GIF here -->
-<!-- <p align="center"><img src="docs/hero.gif" alt="ApiArk Demo" width="800" /></p> -->
+<p align="center">
+  <img src="docs/screenshots/rest-get.png" alt="ApiArk — REST GET Request" width="800" />
+</p>
+
+<details>
+<summary><strong>More screenshots</strong></summary>
+
+<table>
+<tr>
+<td><strong>POST Request</strong></td>
+<td><strong>GraphQL</strong></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/rest-post.png" alt="POST Request" width="400" /></td>
+<td><img src="docs/screenshots/graphql.png" alt="GraphQL" width="400" /></td>
+</tr>
+<tr>
+<td><strong>WebSocket</strong></td>
+<td><strong>Server-Sent Events</strong></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/websocket.png" alt="WebSocket" width="400" /></td>
+<td><img src="docs/screenshots/sse.png" alt="SSE" width="400" /></td>
+</tr>
+<tr>
+<td><strong>PUT Request</strong></td>
+<td><strong>PATCH Request</strong></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/rest-put.png" alt="PUT Request" width="400" /></td>
+<td><img src="docs/screenshots/rest-patch-title.png" alt="PATCH Request" width="400" /></td>
+</tr>
+<tr>
+<td><strong>DELETE Request</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/rest-delete.png" alt="DELETE Request" width="400" /></td>
+<td></td>
+</tr>
+</table>
+
+</details>
 
 ## Why ApiArk?
 

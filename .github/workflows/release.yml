@@ -145,43 +145,41 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
+            const glob = require('path');
             const target = '${{ matrix.target }}';
             const bundleDir = `apps/desktop/src-tauri/target/${target}/release/bundle`;
-
-            function findFiles(dir) {
-              const results = [];
-              if (!fs.existsSync(dir)) return results;
-              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-                const full = path.join(dir, entry.name);
-                if (entry.isDirectory()) results.push(...findFiles(full));
-                else results.push(full);
-              }
-              return results;
-            }
-
-            const allFiles = findFiles(bundleDir);
-            console.log('All bundle files:', allFiles.map(f => path.basename(f)));
-
-            // Determine arch suffix for macOS sig renaming
             const archSuffix = target.includes('aarch64') ? '_aarch64' : '_x64';
 
-            const updaterFiles = allFiles.filter(f => {
-              const name = path.basename(f);
-              if (name.startsWith('api-ark')) return false;
-              if (name.endsWith('.sig')) return true;
-              if (name.endsWith('.AppImage.tar.gz')) return true;
-              if (name.endsWith('.app.tar.gz')) return true;
-              if (name.endsWith('.nsis.zip')) return true;
-              if (name.endsWith('.msi.zip')) return true;
-              return false;
-            });
+            // Search only known bundle subdirectories (not recursive into AppImage contents)
+            const searchDirs = ['appimage', 'deb', 'rpm', 'nsis', 'msi', 'macos', 'dmg'];
+            const updaterFiles = [];
+
+            for (const sub of searchDirs) {
+              const dir = path.join(bundleDir, sub);
+              if (!fs.existsSync(dir)) continue;
+              // Only read top-level files in each bundle subdirectory (no recursion)
+              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                if (entry.isDirectory()) continue;
+                const name = entry.name;
+                // Skip api-ark duplicates, only want ApiArk variants
+                if (name.startsWith('api-ark')) continue;
+                // Match updater-relevant files
+                if (name.endsWith('.sig') ||
+                    name.endsWith('.AppImage.tar.gz') ||
+                    name.endsWith('.app.tar.gz') ||
+                    name.endsWith('.nsis.zip') ||
+                    name.endsWith('.msi.zip')) {
+                  updaterFiles.push(path.join(dir, name));
+                }
+              }
+            }
 
             console.log('Updater files to upload:', updaterFiles.map(f => path.basename(f)));
 
             for (const file of updaterFiles) {
               let name = path.basename(file);
 
-              // Rename macOS sigs to match uploaded asset names
+              // Rename macOS sigs/bundles to match arch-suffixed asset names
               // Build produces: ApiArk.app.tar.gz.sig
               // tauri-action uploads as: ApiArk_aarch64.app.tar.gz / ApiArk_x64.app.tar.gz
               if (name === 'ApiArk.app.tar.gz.sig') {

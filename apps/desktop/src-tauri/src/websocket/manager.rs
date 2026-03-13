@@ -1,10 +1,11 @@
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use futures_util::{SinkExt, StreamExt};
 use tauri::{AppHandle, Emitter};
 use tokio::sync::{mpsc, watch};
 use tokio_tungstenite::tungstenite;
+use tungstenite::client::IntoClientRequest;
 
 use super::{WsConnectParams, WsMessage, WsStatus};
 
@@ -14,13 +15,13 @@ struct WsConnection {
 }
 
 pub struct WsManager {
-    connections: Mutex<HashMap<String, WsConnection>>,
+    connections: Arc<Mutex<HashMap<String, WsConnection>>>,
 }
 
 impl WsManager {
     pub fn new() -> Self {
         Self {
-            connections: Mutex::new(HashMap::new()),
+            connections: Arc::new(Mutex::new(HashMap::new())),
         }
     }
 
@@ -71,15 +72,18 @@ impl WsManager {
 
         let conn_id = connection_id.clone();
         let app_clone = app.clone();
+        let connections_ref = Arc::clone(&self.connections);
 
         tokio::spawn(async move {
-            // Build request with headers
-            let mut request = match tungstenite::http::Request::builder()
-                .uri(&params.url)
-                .body(())
-            {
+            // Build request using IntoClientRequest which adds all required
+            // WebSocket headers (Sec-WebSocket-Key, Sec-WebSocket-Version, etc.)
+            let mut request = match params.url.as_str().into_client_request() {
                 Ok(r) => r,
                 Err(e) => {
+                    // Clean up connection from map on failure
+                    if let Ok(mut conns) = connections_ref.lock() {
+                        conns.remove(&conn_id);
+                    }
                     let _ = app_clone.emit(
                         "ws:status",
                         WsStatus {
@@ -109,6 +113,10 @@ impl WsManager {
             let ws_stream = match tokio_tungstenite::connect_async(request).await {
                 Ok((stream, _)) => stream,
                 Err(e) => {
+                    // Clean up connection from map on failure
+                    if let Ok(mut conns) = connections_ref.lock() {
+                        conns.remove(&conn_id);
+                    }
                     let _ = app_clone.emit(
                         "ws:status",
                         WsStatus {
@@ -189,6 +197,11 @@ impl WsManager {
                     }
                     else => break,
                 }
+            }
+
+            // Clean up connection from map on disconnect
+            if let Ok(mut conns) = connections_ref.lock() {
+                conns.remove(&conn_id);
             }
 
             // Disconnected

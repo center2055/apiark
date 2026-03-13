@@ -1,0 +1,297 @@
+{
+  "app": {
+    "name": "ApiArk"
+  },
+  "sidebar": {
+    "collections": "コレクション",
+    "history": "履歴",
+    "environments": "環境",
+    "search": "コレクションを検索...",
+    "noCollections": "フォルダを開くかコレクションをインポートして開始",
+    "openFolder": "フォルダを開く",
+    "importCollection": "コレクションをインポート",
+    "newRequest": "新しいリクエスト",
+    "newFolder": "新しいフォルダ",
+    "cookieSettings": "Cookie 設定",
+    "rename": "名前変更",
+    "duplicate": "複製",
+    "delete": "削除",
+    "noResults": "一致するリクエストがありません"
+  },
+  "tabs": {
+    "untitled": "無題のリクエスト",
+    "close": "閉じる",
+    "closeOthers": "他を閉じる",
+    "closeAll": "すべて閉じる",
+    "noTabs": "サイドバーからリクエストを開くか、{{shortcut}} を押して作成してください"
+  },
+  "request": {
+    "send": "送信",
+    "sending": "送信中...",
+    "cancel": "キャンセル",
+    "urlPlaceholder": "URL を入力または cURL を貼り付け",
+    "params": "パラメータ",
+    "headers": "ヘッダー",
+    "body": "ボディ",
+    "auth": "認証",
+    "scripts": "スクリプト",
+    "preRequest": "リクエスト前",
+    "postResponse": "レスポンス後",
+    "tests": "テスト",
+    "assertions": "アサーション",
+    "key": "キー",
+    "value": "値",
+    "description": "説明",
+    "enabled": "有効",
+    "addRow": "追加",
+    "bulkEdit": "一括編集",
+    "pathVariables": "パス変数"
+  },
+  "body": {
+    "json": "JSON",
+    "xml": "XML",
+    "formData": "Form Data",
+    "urlencoded": "URL Encoded",
+    "raw": "生データ",
+    "binary": "バイナリ",
+    "none": "なし"
+  },
+  "auth": {
+    "type": "認証タイプ",
+    "none": "認証なし",
+    "bearer": "Bearer Token",
+    "basic": "Basic Auth",
+    "apiKey": "API Key",
+    "oauth2": "OAuth 2.0",
+    "digest": "Digest Auth",
+    "awsV4": "AWS Signature v4",
+    "ntlm": "NTLM",
+    "jwtBearer": "JWT Bearer",
+    "token": "トークン",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "inherited": "{{source}} から継承"
+  },
+  "response": {
+    "body": "ボディ",
+    "headers": "ヘッダー",
+    "cookies": "Cookies",
+    "tests": "テスト",
+    "timing": "タイミング",
+    "pretty": "整形",
+    "raw": "生データ",
+    "preview": "プレビュー",
+    "noResponse": "リクエストを送信するとレスポンスが表示されます",
+    "copyResponse": "レスポンスをコピー",
+    "saveToFile": "ファイルに保存",
+    "loadFullResponse": "完全なレスポンスを読み込む",
+    "truncated": "レスポンスが切り詰められました ({{size}})。最初の 1MB を表示中。",
+    "status": {
+      "success": "成功",
+      "redirect": "リダイレクト",
+      "clientError": "クライアントエラー",
+      "serverError": "サーバーエラー"
+    }
+  },
+  "environment": {
+    "title": "環境",
+    "noEnvironment": "環境なし",
+    "create": "環境を作成",
+    "edit": "環境を編集",
+    "name": "名前",
+    "variables": "変数",
+    "secrets": "シークレット",
+    "noEnvironments": "環境を作成してリクエスト間で変数を管理",
+    "variableHint": "動的な値には {{syntax}} を使用してください"
+  },
+  "history": {
+    "title": "履歴",
+    "search": "履歴を検索...",
+    "clear": "履歴をクリア",
+    "clearConfirm": "すべての履歴を削除してもよろしいですか？",
+    "noHistory": "最初のリクエストを送信するとここに表示されます",
+    "restore": "復元"
+  },
+  "settings": {
+    "title": "設定",
+    "general": "一般",
+    "theme": "テーマ",
+    "dark": "ダーク",
+    "light": "ライト",
+    "system": "システム",
+    "sidebarWidth": "サイドバーの幅",
+    "network": "ネットワーク",
+    "sslVerification": "SSL 証明書の検証",
+    "followRedirects": "リダイレクトを追跡",
+    "timeout": "タイムアウト (ms)",
+    "proxyUrl": "プロキシ URL",
+    "proxyUsername": "ユーザー名 (任意)",
+    "proxyPassword": "パスワード (任意)",
+    "certificates": "証明書",
+    "caCert": "カスタム CA 証明書 (PEM)",
+    "clientCert": "クライアント証明書 (PEM)",
+    "clientKey": "クライアントキー (PEM)",
+    "pfxPassphrase": "PFX パスフレーズ",
+    "backup": "バックアップ",
+    "includeHistory": "エクスポートに履歴を含める",
+    "exportState": "状態をエクスポート",
+    "importState": "状態をインポート",
+    "exporting": "エクスポート中...",
+    "importing": "インポート中...",
+    "updates": "アップデート",
+    "updateChannel": "更新チャンネル",
+    "stable": "安定版",
+    "beta": "ベータ",
+    "nightly": "Nightly",
+    "checkForUpdates": "アップデートを確認",
+    "upToDate": "最新の状態です",
+    "updateAvailable": "アップデートがあります：{{version}}"
+  },
+  "runner": {
+    "title": "コレクションランナー",
+    "run": "実行",
+    "stop": "停止",
+    "iterations": "反復回数",
+    "delay": "遅延 (ms)",
+    "dataFile": "データファイル",
+    "results": "結果",
+    "passed": "成功",
+    "failed": "失敗",
+    "skipped": "スキップ",
+    "duration": "所要時間"
+  },
+  "import": {
+    "title": "コレクションをインポート",
+    "selectFile": "ファイルを選択",
+    "format": "フォーマット",
+    "autoDetect": "自動検出",
+    "preview": "プレビュー",
+    "importing": "インポート中...",
+    "success": "インポート成功",
+    "requestCount": "{{count}} 件のリクエスト",
+    "folderCount": "{{count}} 件のフォルダ",
+    "warnings": "{{count}} 件の警告"
+  },
+  "export": {
+    "title": "コレクションをエクスポート",
+    "format": "フォーマット",
+    "postman": "Postman v2.1",
+    "openapi": "OpenAPI 3.0",
+    "apiark": "ApiArk YAML"
+  },
+  "commandPalette": {
+    "placeholder": "コマンドを入力...",
+    "noResults": "一致するコマンドがありません"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "confirm": "確認",
+    "delete": "削除",
+    "rename": "名前変更",
+    "create": "作成",
+    "edit": "編集",
+    "copy": "コピー",
+    "paste": "貼り付け",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "warning": "警告",
+    "retry": "再試行",
+    "browse": "参照..."
+  },
+  "errors": {
+    "connectionRefused": "接続が拒否されました — サーバーは稼働中ですか？",
+    "timeout": "リクエストがタイムアウトしました",
+    "dnsFailure": "DNS 解決に失敗しました — URL を確認してください",
+    "tlsError": "TLS/SSL エラー — 証明書の設定を確認してください",
+    "networkError": "ネットワークエラー",
+    "autoSaveFailed": "自動保存に失敗しました：{{reason}}",
+    "fileDeleted": "このファイルは削除されました",
+    "fileChanged": "このファイルは外部で変更されました",
+    "mergeConflict": "このファイルにはマージの競合があります。エディタまたは Git ツールで解決してください。"
+  },
+  "onboarding": {
+    "welcome": "ApiArk へようこそ",
+    "tagline": "ローカルファーストの API 開発。アカウント不要。クラウド不要。フルパワー。",
+    "startScratch": "ゼロから始める",
+    "importExisting": "既存のコレクションをインポート",
+    "openFolder": "フォルダを開く",
+    "chooseTheme": "テーマを選択"
+  },
+  "console": {
+    "title": "コンソール",
+    "clear": "クリア",
+    "filter": "フィルター",
+    "all": "すべて",
+    "noLogs": "コンソール出力はまだありません"
+  },
+  "grpc": {
+    "title": "gRPC",
+    "loadProto": ".proto を読み込む",
+    "service": "サービス",
+    "method": "メソッド",
+    "invoke": "呼び出し",
+    "metadata": "メタデータ",
+    "requestBody": "リクエスト",
+    "responseBody": "レスポンス"
+  },
+  "mock": {
+    "title": "Mock サーバー",
+    "start": "サーバーを起動",
+    "stop": "停止",
+    "port": "ポート",
+    "running": "実行中",
+    "stopped": "停止中"
+  },
+  "monitor": {
+    "title": "モニター",
+    "create": "モニターを作成",
+    "schedule": "スケジュール",
+    "lastRun": "前回の実行",
+    "nextRun": "次回の実行",
+    "enabled": "有効",
+    "disabled": "無効"
+  },
+  "docs": {
+    "title": "API ドキュメント",
+    "generate": "生成",
+    "preview": "プレビュー",
+    "html": "HTML",
+    "markdown": "Markdown"
+  },
+  "diff": {
+    "title": "レスポンスの差分",
+    "snapshot": "スナップショット",
+    "compare": "比較"
+  },
+  "trash": {
+    "title": "ゴミ箱",
+    "restore": "復元",
+    "emptyTrash": "ゴミ箱を空にする",
+    "deletedAt": "{{date}} に削除"
+  },
+  "migration": {
+    "title": "コレクション形式の更新",
+    "message": "このコレクションは形式 v{{old}} を使用しています。現在のバージョンは v{{new}} です。",
+    "upgrade": "アップグレード",
+    "readOnly": "読み取り専用で開く",
+    "upgradeHint": "アップグレードするとコレクションファイルが書き換えられます。先に変更をコミットしてください。"
+  },
+  "websocket": {
+    "connect": "接続",
+    "disconnect": "切断",
+    "send": "送信",
+    "connected": "接続済み",
+    "disconnected": "切断済み",
+    "messages": "メッセージ"
+  },
+  "sse": {
+    "connect": "接続",
+    "disconnect": "切断",
+    "events": "イベント",
+    "connected": "接続済み",
+    "disconnected": "切断済み"
+  }
+}

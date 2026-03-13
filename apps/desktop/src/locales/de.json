@@ -1,0 +1,297 @@
+{
+  "app": {
+    "name": "ApiArk"
+  },
+  "sidebar": {
+    "collections": "Sammlungen",
+    "history": "Verlauf",
+    "environments": "Umgebungen",
+    "search": "Sammlungen durchsuchen...",
+    "noCollections": "Öffne einen Ordner oder importiere eine Sammlung, um zu beginnen",
+    "openFolder": "Ordner Öffnen",
+    "importCollection": "Sammlung Importieren",
+    "newRequest": "Neue Anfrage",
+    "newFolder": "Neuer Ordner",
+    "cookieSettings": "Cookie-Einstellungen",
+    "rename": "Umbenennen",
+    "duplicate": "Duplizieren",
+    "delete": "Löschen",
+    "noResults": "Keine passenden Anfragen"
+  },
+  "tabs": {
+    "untitled": "Unbenannte Anfrage",
+    "close": "Schließen",
+    "closeOthers": "Andere schließen",
+    "closeAll": "Alle schließen",
+    "noTabs": "Öffne eine Anfrage aus der Seitenleiste oder drücke {{shortcut}}, um eine zu erstellen"
+  },
+  "request": {
+    "send": "Senden",
+    "sending": "Senden...",
+    "cancel": "Abbrechen",
+    "urlPlaceholder": "URL eingeben oder cURL einfügen",
+    "params": "Parameter",
+    "headers": "Header",
+    "body": "Body",
+    "auth": "Authentifizierung",
+    "scripts": "Scripts",
+    "preRequest": "Vor Anfrage",
+    "postResponse": "Nach Antwort",
+    "tests": "Tests",
+    "assertions": "Zusicherungen",
+    "key": "Schlüssel",
+    "value": "Wert",
+    "description": "Beschreibung",
+    "enabled": "Aktiviert",
+    "addRow": "Hinzufügen",
+    "bulkEdit": "Massenbearbeitung",
+    "pathVariables": "Pfadvariablen"
+  },
+  "body": {
+    "json": "JSON",
+    "xml": "XML",
+    "formData": "Form Data",
+    "urlencoded": "URL Encoded",
+    "raw": "Roh",
+    "binary": "Binär",
+    "none": "Keiner"
+  },
+  "auth": {
+    "type": "Authentifizierungstyp",
+    "none": "Keine Authentifizierung",
+    "bearer": "Bearer Token",
+    "basic": "Basic Auth",
+    "apiKey": "API Key",
+    "oauth2": "OAuth 2.0",
+    "digest": "Digest Auth",
+    "awsV4": "AWS Signature v4",
+    "ntlm": "NTLM",
+    "jwtBearer": "JWT Bearer",
+    "token": "Token",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "inherited": "Geerbt von {{source}}"
+  },
+  "response": {
+    "body": "Body",
+    "headers": "Header",
+    "cookies": "Cookies",
+    "tests": "Tests",
+    "timing": "Zeiten",
+    "pretty": "Formatiert",
+    "raw": "Roh",
+    "preview": "Vorschau",
+    "noResponse": "Sende eine Anfrage, um die Antwort zu sehen",
+    "copyResponse": "Antwort Kopieren",
+    "saveToFile": "In Datei Speichern",
+    "loadFullResponse": "Vollständige Antwort Laden",
+    "truncated": "Antwort gekürzt ({{size}}). Zeige erstes 1 MB.",
+    "status": {
+      "success": "Erfolg",
+      "redirect": "Weiterleitung",
+      "clientError": "Client-Fehler",
+      "serverError": "Server-Fehler"
+    }
+  },
+  "environment": {
+    "title": "Umgebungen",
+    "noEnvironment": "Keine Umgebung",
+    "create": "Umgebung Erstellen",
+    "edit": "Umgebung Bearbeiten",
+    "name": "Name",
+    "variables": "Variablen",
+    "secrets": "Geheimnisse",
+    "noEnvironments": "Erstelle eine Umgebung, um Variablen über Anfragen hinweg zu verwalten",
+    "variableHint": "Verwende {{syntax}} für dynamische Werte"
+  },
+  "history": {
+    "title": "Verlauf",
+    "search": "Verlauf durchsuchen...",
+    "clear": "Verlauf Löschen",
+    "clearConfirm": "Bist du sicher, dass du den gesamten Verlauf löschen möchtest?",
+    "noHistory": "Sende deine erste Anfrage, um sie hier zu sehen",
+    "restore": "Wiederherstellen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "general": "Allgemein",
+    "theme": "Design",
+    "dark": "Dunkel",
+    "light": "Hell",
+    "system": "System",
+    "sidebarWidth": "Seitenleistenbreite",
+    "network": "Netzwerk",
+    "sslVerification": "SSL-Zertifikatsprüfung",
+    "followRedirects": "Weiterleitungen folgen",
+    "timeout": "Zeitlimit (ms)",
+    "proxyUrl": "Proxy-URL",
+    "proxyUsername": "Benutzername (optional)",
+    "proxyPassword": "Passwort (optional)",
+    "certificates": "Zertifikate",
+    "caCert": "Benutzerdefiniertes CA-Zertifikat (PEM)",
+    "clientCert": "Client-Zertifikat (PEM)",
+    "clientKey": "Client-Schlüssel (PEM)",
+    "pfxPassphrase": "PFX-Passphrase",
+    "backup": "Sicherung",
+    "includeHistory": "Verlauf in Export einbeziehen",
+    "exportState": "Zustand Exportieren",
+    "importState": "Zustand Importieren",
+    "exporting": "Exportiere...",
+    "importing": "Importiere...",
+    "updates": "Updates",
+    "updateChannel": "Update-Kanal",
+    "stable": "Stabil",
+    "beta": "Beta",
+    "nightly": "Nightly",
+    "checkForUpdates": "Nach Updates Suchen",
+    "upToDate": "Du bist auf dem neuesten Stand",
+    "updateAvailable": "Update verfügbar: {{version}}"
+  },
+  "runner": {
+    "title": "Sammlungsausführer",
+    "run": "Ausführen",
+    "stop": "Stoppen",
+    "iterations": "Iterationen",
+    "delay": "Verzögerung (ms)",
+    "dataFile": "Datendatei",
+    "results": "Ergebnisse",
+    "passed": "Bestanden",
+    "failed": "Fehlgeschlagen",
+    "skipped": "Übersprungen",
+    "duration": "Dauer"
+  },
+  "import": {
+    "title": "Sammlung Importieren",
+    "selectFile": "Datei Auswählen",
+    "format": "Format",
+    "autoDetect": "Automatisch erkennen",
+    "preview": "Vorschau",
+    "importing": "Importiere...",
+    "success": "Import erfolgreich",
+    "requestCount": "{{count}} Anfragen",
+    "folderCount": "{{count}} Ordner",
+    "warnings": "{{count}} Warnungen"
+  },
+  "export": {
+    "title": "Sammlung Exportieren",
+    "format": "Format",
+    "postman": "Postman v2.1",
+    "openapi": "OpenAPI 3.0",
+    "apiark": "ApiArk YAML"
+  },
+  "commandPalette": {
+    "placeholder": "Befehl eingeben...",
+    "noResults": "Keine passenden Befehle"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "rename": "Umbenennen",
+    "create": "Erstellen",
+    "edit": "Bearbeiten",
+    "copy": "Kopieren",
+    "paste": "Einfügen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "warning": "Warnung",
+    "retry": "Wiederholen",
+    "browse": "Durchsuchen..."
+  },
+  "errors": {
+    "connectionRefused": "Verbindung abgelehnt — läuft der Server?",
+    "timeout": "Zeitlimit der Anfrage überschritten",
+    "dnsFailure": "DNS-Auflösung fehlgeschlagen — überprüfe die URL",
+    "tlsError": "TLS/SSL-Fehler — überprüfe die Zertifikatseinstellungen",
+    "networkError": "Netzwerkfehler",
+    "autoSaveFailed": "Automatisches Speichern fehlgeschlagen: {{reason}}",
+    "fileDeleted": "Diese Datei wurde gelöscht",
+    "fileChanged": "Diese Datei wurde extern geändert",
+    "mergeConflict": "Diese Datei enthält Merge-Konflikte. Löse sie in deinem Editor oder Git-Tool."
+  },
+  "onboarding": {
+    "welcome": "Willkommen bei ApiArk",
+    "tagline": "Lokale API-Entwicklung. Keine Konten. Keine Cloud. Volle Leistung.",
+    "startScratch": "Von Grund auf beginnen",
+    "importExisting": "Bestehende Sammlung importieren",
+    "openFolder": "Ordner öffnen",
+    "chooseTheme": "Wähle dein Design"
+  },
+  "console": {
+    "title": "Konsole",
+    "clear": "Leeren",
+    "filter": "Filtern",
+    "all": "Alle",
+    "noLogs": "Noch keine Konsolenausgabe"
+  },
+  "grpc": {
+    "title": "gRPC",
+    "loadProto": ".proto laden",
+    "service": "Dienst",
+    "method": "Methode",
+    "invoke": "Aufrufen",
+    "metadata": "Metadaten",
+    "requestBody": "Anfrage",
+    "responseBody": "Antwort"
+  },
+  "mock": {
+    "title": "Mock-Server",
+    "start": "Server Starten",
+    "stop": "Stoppen",
+    "port": "Port",
+    "running": "Läuft",
+    "stopped": "Gestoppt"
+  },
+  "monitor": {
+    "title": "Monitore",
+    "create": "Monitor Erstellen",
+    "schedule": "Zeitplan",
+    "lastRun": "Letzte Ausführung",
+    "nextRun": "Nächste Ausführung",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert"
+  },
+  "docs": {
+    "title": "API-Dokumentation",
+    "generate": "Generieren",
+    "preview": "Vorschau",
+    "html": "HTML",
+    "markdown": "Markdown"
+  },
+  "diff": {
+    "title": "Antwort-Diff",
+    "snapshot": "Schnappschuss",
+    "compare": "Vergleichen"
+  },
+  "trash": {
+    "title": "Papierkorb",
+    "restore": "Wiederherstellen",
+    "emptyTrash": "Papierkorb Leeren",
+    "deletedAt": "Gelöscht am {{date}}"
+  },
+  "migration": {
+    "title": "Sammlungsformat-Aktualisierung",
+    "message": "Diese Sammlung verwendet Format v{{old}}. Die aktuelle Version ist v{{new}}.",
+    "upgrade": "Aktualisieren",
+    "readOnly": "Schreibgeschützt Öffnen",
+    "upgradeHint": "Die Aktualisierung schreibt die Sammlungsdateien neu. Committe deine Änderungen zuerst."
+  },
+  "websocket": {
+    "connect": "Verbinden",
+    "disconnect": "Trennen",
+    "send": "Senden",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt",
+    "messages": "Nachrichten"
+  },
+  "sse": {
+    "connect": "Verbinden",
+    "disconnect": "Trennen",
+    "events": "Ereignisse",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt"
+  }
+}
