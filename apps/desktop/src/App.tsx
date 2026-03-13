@@ -35,7 +35,7 @@ import { BottomPanel } from "@/components/layout/bottom-panel";
 import { useCollectionStore } from "@/stores/collection-store";
 import { AiAssistantDialog } from "@/components/ai/ai-assistant-dialog";
 import { useShortcutsStore } from "@/stores/shortcuts-store";
-import { AlertCircle, X, RefreshCw, FileX, GitMerge, Shield, ArrowRightLeft, Download } from "lucide-react";
+import { AlertCircle, X, RefreshCw, FileX, GitMerge, Shield, ArrowRightLeft, Download, ExternalLink } from "lucide-react";
 import { ToastContainer } from "@/components/ui/toast-container";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useResponsive } from "@/hooks/use-responsive";
@@ -554,9 +554,21 @@ function UpdateBanner() {
   const [installing, setInstalling] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [installType, setInstallType] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+
+    const detectInstallType = async () => {
+      try {
+        const { getInstallType } = await import("@/lib/tauri-api");
+        const type = await getInstallType();
+        if (!cancelled) setInstallType(type);
+      } catch {
+        if (!cancelled) setInstallType("unknown");
+      }
+    };
+
     const checkUpdate = async () => {
       try {
         const { check } = await import("@tauri-apps/plugin-updater");
@@ -595,6 +607,7 @@ function UpdateBanner() {
       }
     };
 
+    detectInstallType();
     const timer = setTimeout(checkUpdate, 5000);
     const interval = setInterval(checkUpdate, 6 * 60 * 60 * 1000);
 
@@ -607,7 +620,9 @@ function UpdateBanner() {
 
   if (!update || dismissed) return null;
 
+  const isSystemPackage = installType === "system-package";
   const isFinished = status?.includes("Restart");
+  const downloadUrl = `https://github.com/berbicanes/apiark/releases/tag/v${update.version}`;
 
   return (
     <Dialog.Root open onOpenChange={(open) => { if (!open && !installing) setDismissed(true); }}>
@@ -629,18 +644,38 @@ function UpdateBanner() {
               </div>
             </div>
 
-            {status && (
+            {isSystemPackage ? (
               <div className="mb-4">
-                <p className="mb-2 text-sm text-[var(--color-text-secondary)]">{status}</p>
-                {installing && !isFinished && (
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-border)]">
-                    <div
-                      className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-300"
-                      style={{ width: `${progress || 5}%` }}
-                    />
+                <p className="mb-3 text-sm text-[var(--color-text-secondary)]">
+                  Auto-update isn't supported for system package installs (.deb/.rpm).
+                  Download the new version from GitHub:
+                </p>
+                <a
+                  href={downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-elevated)] px-3 py-2 text-sm text-[var(--color-accent)] hover:bg-[var(--color-border)] transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Download v{update.version}
+                </a>
+              </div>
+            ) : (
+              <>
+                {status && (
+                  <div className="mb-4">
+                    <p className="mb-2 text-sm text-[var(--color-text-secondary)]">{status}</p>
+                    {installing && !isFinished && (
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-border)]">
+                        <div
+                          className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-300"
+                          style={{ width: `${progress || 5}%` }}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+              </>
             )}
 
             <div className="flex items-center justify-end gap-2">
@@ -649,10 +684,10 @@ function UpdateBanner() {
                   onClick={() => setDismissed(true)}
                   className="rounded-lg px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-elevated)]"
                 >
-                  Later
+                  {isSystemPackage ? "Dismiss" : "Later"}
                 </button>
               )}
-              {!installing && !isFinished && (
+              {!isSystemPackage && !installing && !isFinished && (
                 <button
                   onClick={async () => {
                     try {

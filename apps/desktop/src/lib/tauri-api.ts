@@ -749,3 +749,7 @@ export async function backupCurrentBinary(): Promise<string> {
 export async function clearBackups(): Promise<void> {
   return await invoke<void>("clear_backups", {});
 }
+
+export async function getInstallType(): Promise<string> {
+  return await invoke<string>("get_install_type", {});
+}

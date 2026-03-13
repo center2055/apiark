@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, FolderOpen, Download, Upload, RefreshCw } from "lucide-react";
+import { X, FolderOpen, Download, Upload, RefreshCw, ExternalLink } from "lucide-react";
 import { useSettingsStore } from "@/stores/settings-store";
 import {
   useShortcutsStore,
@@ -363,11 +363,19 @@ function UpdateSection({
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
   const [pendingUpdate, setPendingUpdate] = useState<Awaited<ReturnType<typeof import("@tauri-apps/plugin-updater").check>> | null>(null);
   const [backups, setBackups] = useState<string[]>([]);
+  const [installType, setInstallType] = useState<string | null>(null);
 
   const loadBackups = async () => {
     try {
       const { listRollbackVersions } = await import("@/lib/tauri-api");
       setBackups(await listRollbackVersions());
+    } catch { /* ignore */ }
+  };
+
+  const detectInstallType = async () => {
+    try {
+      const { getInstallType } = await import("@/lib/tauri-api");
+      setInstallType(await getInstallType());
     } catch { /* ignore */ }
   };
 
@@ -418,14 +426,33 @@ function UpdateSection({
     }
   };
 
-  // Load backups on mount
-  useState(() => { loadBackups(); });
+  // Load backups and detect install type on mount
+  useState(() => { loadBackups(); detectInstallType(); });
+
+  const isSystemPackage = installType === "system-package";
 
   return (
     <section>
       <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
         Updates
       </h3>
+
+      {isSystemPackage && (
+        <div className="mb-4 rounded-lg bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 p-3">
+          <p className="text-sm text-[var(--color-text-secondary)]">
+            Auto-update isn't available for system package installs (.deb/.rpm).
+            Use your package manager or download from{" "}
+            <a
+              href="https://github.com/berbicanes/apiark/releases/latest"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--color-accent)] hover:underline inline-flex items-center gap-1"
+            >
+              GitHub Releases <ExternalLink className="h-3 w-3" />
+            </a>
+          </p>
+        </div>
+      )}
 
       <div className="mb-4">
         <label className="mb-2 block text-sm text-[var(--color-text-secondary)]">
@@ -458,7 +485,7 @@ function UpdateSection({
           {checking ? "Checking..." : "Check for Updates"}
         </button>
 
-        {pendingUpdate && !installing && (
+        {pendingUpdate && !installing && !isSystemPackage && (
           <button
             onClick={installUpdate}
             className="flex items-center gap-1.5 rounded bg-[var(--color-accent)] px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
@@ -466,6 +493,18 @@ function UpdateSection({
             <Download className="h-3.5 w-3.5" />
             Install v{pendingUpdate.version}
           </button>
+        )}
+
+        {pendingUpdate && isSystemPackage && (
+          <a
+            href={`https://github.com/berbicanes/apiark/releases/tag/v${pendingUpdate.version}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded bg-[var(--color-accent)] px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            Download v{pendingUpdate.version}
+          </a>
         )}
 
         {updateStatus && (

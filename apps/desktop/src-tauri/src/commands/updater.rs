@@ -79,6 +79,40 @@ pub async fn backup_current_binary() -> Result<String, String> {
     Ok(backup_path.to_string_lossy().to_string())
 }
 
+/// Detect how the app was installed.
+/// Returns "appimage", "deb", "rpm", "msi", "exe", "dmg", "app", or "unknown".
+#[tauri::command]
+pub async fn get_install_type() -> String {
+    // On Linux, the APPIMAGE env var is set when running from an AppImage
+    #[cfg(target_os = "linux")]
+    {
+        if std::env::var("APPIMAGE").is_ok() {
+            return "appimage".to_string();
+        }
+        // Check common install paths
+        if let Ok(exe) = std::env::current_exe() {
+            let path = exe.to_string_lossy();
+            if path.starts_with("/usr/") || path.starts_with("/opt/") {
+                // Likely installed via .deb or .rpm
+                return "system-package".to_string();
+            }
+        }
+        return "unknown".to_string();
+    }
+    #[cfg(target_os = "macos")]
+    {
+        return "app".to_string();
+    }
+    #[cfg(target_os = "windows")]
+    {
+        return "windows".to_string();
+    }
+    #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+    {
+        return "unknown".to_string();
+    }
+}
+
 /// Delete all backup binaries.
 #[tauri::command]
 pub async fn clear_backups() -> Result<(), String> {
