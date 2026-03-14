@@ -408,9 +408,25 @@ jobs:
             }
 
             // Undraft the release
-            await github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: releaseId,
-              draft: false,
-            });
+            try {
+              await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: releaseId,
+                draft: false,
+              });
+              console.log('Release published successfully');
+            } catch (e) {
+              // Release may already be undrafted (e.g. from a previous run)
+              console.log(`Note: undraft returned ${e.status} — release may already be published`);
+              const { data: rel } = await github.rest.repos.getRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: releaseId,
+              });
+              if (!rel.draft) {
+                console.log('Confirmed: release is already published');
+              } else {
+                throw e;
+              }
+            }
