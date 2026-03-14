@@ -205,6 +205,7 @@ async function ghFetchAll(
 interface OverviewData {
   stars: number | null;
   downloads: number | null;
+  autoUpdates: number | null;
   releases: number | null;
   openIssues: number | null;
   openPRs: number | null;
@@ -214,7 +215,7 @@ interface OverviewData {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface ReleaseInfo { tag: string; downloads: number; date: string; prerelease: boolean; assets: any[]; }
+interface ReleaseInfo { tag: string; downloads: number; autoUpdates: number; date: string; prerelease: boolean; assets: any[]; }
 interface MostDownloaded { name: string; count: number; release: string; }
 interface PlatformCounts { Windows: number; macOS: number; Linux: number; Other: number; }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -435,7 +436,7 @@ export default function MetricsPage() {
 
   // Data states
   const [overview, setOverview] = useState<OverviewData>({
-    stars: null, downloads: null, releases: null, openIssues: null,
+    stars: null, downloads: null, autoUpdates: null, releases: null, openIssues: null,
     openPRs: null, forks: null, watchers: null, contributors: null,
   });
   const [releaseData, setReleaseData] = useState<ReleaseInfo[]>([]);
@@ -517,14 +518,20 @@ export default function MetricsPage() {
     try {
       const releases = await ghFetchAll(`/repos/${REPO}/releases`, "per_page=100", onRateLimit);
       let totalDownloads = 0;
+      let totalAutoUpdates = 0;
       const plats: PlatformCounts = { Windows: 0, macOS: 0, Linux: 0, Other: 0 };
       let best: MostDownloaded = { name: "", count: 0, release: "" };
       const data: ReleaseInfo[] = [];
 
       releases.forEach((r: { tag_name: string; published_at: string; created_at: string; prerelease: boolean; assets: { name: string; download_count: number; size: number }[]; body: string }) => {
         let relDl = 0;
+        let relAutoUp = 0;
         (r.assets || []).forEach((a) => {
-          if (isAutoUpdaterAsset(a.name)) return;
+          if (isAutoUpdaterAsset(a.name)) {
+            relAutoUp += a.download_count;
+            totalAutoUpdates += a.download_count;
+            return;
+          }
           relDl += a.download_count;
           totalDownloads += a.download_count;
           const plat = detectPlatform(a.name) as keyof PlatformCounts;
@@ -536,13 +543,14 @@ export default function MetricsPage() {
         data.push({
           tag: r.tag_name,
           downloads: relDl,
+          autoUpdates: relAutoUp,
           date: r.published_at || r.created_at,
           prerelease: r.prerelease,
           assets: r.assets || [],
         });
       });
 
-      setOverview((prev) => ({ ...prev, releases: releases.length, downloads: totalDownloads }));
+      setOverview((prev) => ({ ...prev, releases: releases.length, downloads: totalDownloads, autoUpdates: totalAutoUpdates }));
       setReleaseData(data);
       setPlatformCounts(plats);
       if (best.count > 0) setMostDownloaded(best);
@@ -680,10 +688,18 @@ export default function MetricsPage() {
     labels: sortedReleases.map((r) => r.tag),
     datasets: [
       {
-        label: "Downloads",
+        label: "Manual Downloads",
         data: sortedReleases.map((r) => r.downloads),
         backgroundColor: "rgba(99,102,241,0.7)",
         borderColor: "#6366f1",
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+      {
+        label: "Auto-Updates",
+        data: sortedReleases.map((r) => r.autoUpdates),
+        backgroundColor: "rgba(34,197,94,0.5)",
+        borderColor: "#22c55e",
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -812,7 +828,8 @@ export default function MetricsPage() {
 
   const statCards = [
     { icon: <Star className="h-[18px] w-[18px]" />, bg: "rgba(234,179,8,.12)", color: "#eab308", value: fmt(overview.stars), label: "Stars" },
-    { icon: <Download className="h-[18px] w-[18px]" />, bg: "rgba(34,197,94,.12)", color: "#22c55e", value: fmt(overview.downloads), label: "Total Downloads" },
+    { icon: <Download className="h-[18px] w-[18px]" />, bg: "rgba(34,197,94,.12)", color: "#22c55e", value: fmt(overview.downloads), label: "Manual Downloads" },
+    { icon: <RefreshCw className="h-[18px] w-[18px]" />, bg: "rgba(99,102,241,.12)", color: "#6366f1", value: fmt(overview.autoUpdates), label: "Auto-Updates" },
     { icon: <Tag className="h-[18px] w-[18px]" />, bg: "rgba(99,102,241,.12)", color: "#6366f1", value: fmt(overview.releases), label: "Releases" },
     { icon: <AlertCircle className="h-[18px] w-[18px]" />, bg: "rgba(239,68,68,.12)", color: "#ef4444", value: fmt(overview.openIssues), label: "Open Issues" },
     { icon: <GitPullRequest className="h-[18px] w-[18px]" />, bg: "rgba(168,85,247,.12)", color: "#a855f7", value: fmt(overview.openPRs), label: "Open PRs" },
@@ -937,7 +954,15 @@ export default function MetricsPage() {
                 <Panel title="Downloads by Release">
                   <div className="relative h-[350px]">
                     {releaseData.length > 0 ? (
-                      <Bar data={downloadsBarData} options={chartOptions} />
+                      <Bar data={downloadsBarData} options={{
+                        ...chartOptions,
+                        plugins: { legend: { display: true, labels: { color: "#a1a1aa", font: { size: 11 } } } },
+                        scales: {
+                          ...chartOptions.scales,
+                          x: { ...chartOptions.scales.x, stacked: true },
+                          y: { ...chartOptions.scales.y, stacked: true },
+                        },
+                      }} />
                     ) : (
                       <LoadingSpinner />
                     )}
@@ -963,7 +988,7 @@ export default function MetricsPage() {
                     <table className="w-full border-collapse text-[13px]">
                       <thead>
                         <tr>
-                          {["Release", "Asset", "Platform", "Size", "Downloads"].map((h) => (
+                          {["Release", "Asset", "Type", "Platform", "Size", "Downloads"].map((h) => (
                             <th
                               key={h}
                               className={`border-b border-[#2a2a2e] px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500 ${
@@ -983,7 +1008,7 @@ export default function MetricsPage() {
                                 {r.tag}
                               </td>
                               <td
-                                colSpan={3}
+                                colSpan={4}
                                 className="border-b border-[#2a2a2e] px-3 py-2.5 text-zinc-600"
                               >
                                 No assets
@@ -993,7 +1018,12 @@ export default function MetricsPage() {
                               </td>
                             </tr>
                           ) : (
-                            r.assets.filter((a: { name: string }) => !isAutoUpdaterAsset(a.name)).map(
+                            r.assets
+                              .filter((a: { name: string }) => {
+                                const n = a.name.toLowerCase();
+                                return n !== "latest.json" && !n.endsWith(".sig");
+                              })
+                              .map(
                               (
                                 a: {
                                   name: string;
@@ -1002,6 +1032,7 @@ export default function MetricsPage() {
                                 },
                                 i: number
                               ) => {
+                                const isAutoUpdate = isAutoUpdaterAsset(a.name);
                                 const plat = detectPlatform(a.name);
                                 const platColor =
                                   plat === "Windows"
@@ -1014,13 +1045,24 @@ export default function MetricsPage() {
                                 return (
                                   <tr
                                     key={`${r.tag}-${a.name}`}
-                                    className="hover:bg-[#1c1c1f]"
+                                    className={`hover:bg-[#1c1c1f] ${isAutoUpdate ? "opacity-60" : ""}`}
                                   >
                                     <td className="border-b border-[#2a2a2e] px-3 py-2.5 text-zinc-400">
                                       {i === 0 ? r.tag : ""}
                                     </td>
                                     <td className="max-w-[300px] break-all border-b border-[#2a2a2e] px-3 py-2.5 text-xs text-zinc-400">
                                       {a.name}
+                                    </td>
+                                    <td className="border-b border-[#2a2a2e] px-3 py-2.5">
+                                      <span
+                                        className={`inline-block rounded px-2 py-0.5 text-[11px] font-semibold ${
+                                          isAutoUpdate
+                                            ? "bg-indigo-500/15 text-indigo-400"
+                                            : "bg-green-500/15 text-green-400"
+                                        }`}
+                                      >
+                                        {isAutoUpdate ? "Auto-Update" : "Download"}
+                                      </span>
                                     </td>
                                     <td className="border-b border-[#2a2a2e] px-3 py-2.5">
                                       <span
@@ -1105,7 +1147,7 @@ export default function MetricsPage() {
                     Published {relTime(releaseData[0].date)} — {absDate(releaseData[0].date)}
                   </div>
                   <div className="text-[13px] text-zinc-400">
-                    {releaseData[0].assets.length} assets — {fmt(releaseData[0].downloads)} total downloads
+                    {releaseData[0].assets.length} assets — {fmt(releaseData[0].downloads)} downloads, {fmt(releaseData[0].autoUpdates)} auto-updates
                   </div>
                 </>
               ) : (
@@ -1114,12 +1156,14 @@ export default function MetricsPage() {
             </Panel>
             <Panel title="Release Stats">
               {releaseData.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   {[
                     { label: "Total Releases", value: fmt(releaseData.length) },
                     { label: "Stable", value: fmt(releaseData.filter((r) => !r.prerelease).length), color: "text-green-400" },
                     { label: "Pre-release", value: fmt(releaseData.filter((r) => r.prerelease).length), color: "text-yellow-400" },
-                    { label: "Total Downloads", value: fmt(overview.downloads) },
+                    { label: "Manual Downloads", value: fmt(overview.downloads) },
+                    { label: "Auto-Updates", value: fmt(overview.autoUpdates), color: "text-indigo-400" },
+                    { label: "Total (All)", value: fmt((overview.downloads ?? 0) + (overview.autoUpdates ?? 0)) },
                   ].map((item) => (
                     <div
                       key={item.label}
@@ -1166,7 +1210,7 @@ export default function MetricsPage() {
                         {absDate(r.date)} — {relTime(r.date)}
                       </div>
                       <div className="text-xs text-zinc-400">
-                        {r.assets.length} assets, {fmt(r.downloads)} downloads
+                        {r.assets.length} assets, {fmt(r.downloads)} downloads, {fmt(r.autoUpdates)} auto-updates
                       </div>
                     </div>
                   </div>
