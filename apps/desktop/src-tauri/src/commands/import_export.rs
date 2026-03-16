@@ -130,10 +130,7 @@ pub fn export_collection(collection_path: &str, format: &str) -> Result<String, 
 /// Import a Postman environment JSON file into a collection.
 /// Parses the environment file and saves it as an ApiArk environment YAML.
 #[tauri::command]
-pub fn import_environment(
-    file_path: &str,
-    collection_path: &str,
-) -> Result<String, String> {
+pub fn import_environment(file_path: &str, collection_path: &str) -> Result<String, String> {
     let content =
         std::fs::read_to_string(file_path).map_err(|e| format!("Failed to read file: {e}"))?;
 
@@ -153,10 +150,7 @@ pub fn import_environment(
 
     let mut variables = std::collections::HashMap::new();
     for val in values {
-        let enabled = val
-            .get("enabled")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(true);
+        let enabled = val.get("enabled").and_then(|v| v.as_bool()).unwrap_or(true);
         if !enabled {
             continue;
         }
