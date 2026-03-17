@@ -32,10 +32,11 @@ impl Default for WindowState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", default)]
 pub struct PersistedState {
     pub tabs: Vec<PersistedTab>,
     pub active_tab_index: Option<usize>,
+    pub collection_paths: Vec<String>,
     #[serde(default)]
     pub window_state: Option<WindowState>,
 }
@@ -64,4 +65,60 @@ pub fn save_persisted_state(path: &Path, state: &PersistedState) -> Result<(), S
     std::fs::rename(&tmp_path, path).map_err(|e| format!("Failed to rename state file: {e}"))?;
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::tempdir;
+
+    #[test]
+    fn load_persisted_state_defaults_collection_paths_for_legacy_files() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("state.json");
+
+        std::fs::write(
+            &path,
+            r#"{
+  "tabs": [
+    {
+      "filePath": "/tmp/users.yaml",
+      "collectionPath": "/tmp/apiark"
+    }
+  ],
+  "activeTabIndex": 0
+}"#,
+        )
+        .unwrap();
+
+        let state = load_persisted_state(&path);
+
+        assert_eq!(state.tabs.len(), 1);
+        assert_eq!(state.tabs[0].file_path, "/tmp/users.yaml");
+        assert_eq!(state.tabs[0].collection_path, "/tmp/apiark");
+        assert_eq!(state.active_tab_index, Some(0));
+        assert!(state.collection_paths.is_empty());
+        assert!(state.window_state.is_none());
+    }
+
+    #[test]
+    fn save_persisted_state_round_trips_collection_paths() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("state.json");
+
+        let state = PersistedState {
+            tabs: vec![],
+            active_tab_index: None,
+            collection_paths: vec!["/tmp/apiark".to_string(), "/tmp/other".to_string()],
+            window_state: Some(WindowState::default()),
+        };
+
+        save_persisted_state(&path, &state).unwrap();
+        let loaded = load_persisted_state(&path);
+
+        assert_eq!(loaded.collection_paths, state.collection_paths);
+        assert!(loaded.tabs.is_empty());
+        assert_eq!(loaded.active_tab_index, None);
+        assert!(loaded.window_state.is_some());
+    }
 }

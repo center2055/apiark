@@ -578,6 +578,7 @@ export interface WindowState {
 export interface PersistedState {
   tabs: PersistedTab[];
   activeTabIndex: number | null;
+  collectionPaths: string[];
   windowState?: WindowState;
 }
 

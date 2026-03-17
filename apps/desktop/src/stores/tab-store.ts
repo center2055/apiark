@@ -22,6 +22,7 @@ import {
 import { useEnvironmentStore } from "./environment-store";
 import { useSettingsStore } from "./settings-store";
 import { useConsoleStore } from "./console-store";
+import { useCollectionStore } from "./collection-store";
 
 interface TabState {
   tabs: Tab[];
@@ -949,6 +950,12 @@ export const useTabStore = create<TabState>((set, get) => ({
 
   persistTabs: () => {
     const { tabs, activeTabId } = get();
+    // Persist open collections independently so the sidebar restores even
+    // when the user never opened a request tab from that collection.
+    const collectionPaths = Array.from(
+      new Set(useCollectionStore.getState().collections.map((collection) => collection.path)),
+    );
+
     // Only persist file-backed tabs (exclude ephemeral WS/SSE tabs), deduplicated
     const seen = new Set<string>();
     const persistedTabs = tabs
@@ -977,6 +984,7 @@ export const useTabStore = create<TabState>((set, get) => ({
     savePersistedState({
       tabs: persistedTabs,
       activeTabIndex: activeIndex >= 0 ? activeIndex : null,
+      collectionPaths,
       windowState,
     }).catch(() => { /* Tab persistence failure is non-critical */ });
   },
@@ -984,9 +992,9 @@ export const useTabStore = create<TabState>((set, get) => ({
   restoreTabs: async () => {
     try {
       const persisted = await loadPersistedState();
-      if (persisted.tabs.length === 0) return;
+      if (persisted.tabs.length === 0 && persisted.collectionPaths.length === 0) return;
 
-      const collectionPaths = new Set<string>();
+      const collectionPaths = new Set<string>(persisted.collectionPaths);
       const seenPaths = new Set<string>();
 
       for (const pt of persisted.tabs) {
